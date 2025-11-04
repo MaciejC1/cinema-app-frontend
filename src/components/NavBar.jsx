@@ -7,7 +7,6 @@ const NavBar = () => {
     <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center mt-4">
       <div className="border-primary border-2 bg-black text-white w-3/4 max-w-[1500px] px-6 h-16 shadow-lg rounded-4xl flex items-center justify-between">
 
-
         {/* Lewa sekcja */}
         <div className="flex items-center gap-3">
           <Link to="/" className="flex">

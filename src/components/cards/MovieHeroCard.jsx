@@ -2,7 +2,7 @@ import { motion } from "framer-motion";
 import { Clock, ArrowRight, Popcorn } from "lucide-react";
 import { TiStarFullOutline } from "react-icons/ti";
 
-const MovieHeroCard = ({ title, description, image, director, duration, rating, geners, isActive }) => {
+const MovieHeroCard = ({ title, description, image, director, duration, rating, geners, ageRating, isActive }) => {
     return (
         <div className="relative w-full h-full">
 
@@ -14,12 +14,12 @@ const MovieHeroCard = ({ title, description, image, director, duration, rating, 
             />
 
             {/* Gradienty */}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-            <div className="absolute inset-y-0 left-0 w-full md:w-3/4 bg-gradient-to-r from-black to-transparent"></div>
+            <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-transparent"></div>
+            <div className="absolute inset-y-0 left-0 w-full md:w-3/4 bg-linear-to-r from-black to-transparent"></div>
 
             {/* Tekst */}
             <motion.div
-                className="absolute top-[20%] left-[5%] md:top-[25%] md:left-[10%] w-[90%] md:w-2/5 flex flex-col gap-2 text-white"
+                className="absolute top-[20%] left-[5%] md:top-[25%] md:left-[5%] w-[90%] md:w-2/5 flex flex-col gap-2 text-white"
                 initial={{ opacity: 0, x: -100 }}
                 animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
@@ -34,6 +34,11 @@ const MovieHeroCard = ({ title, description, image, director, duration, rating, 
                         <Clock size={20} />
                         <p className="text-primary">{duration}</p>
                     </div>
+                    {ageRating && (
+                        <div className="flex items-center gap-2 bg-black border-primary border-2 px-2 py-[2px] rounded-2xl text-sm">
+                            <span className="font-semibold">{ageRating}+</span>
+                        </div>
+                    )}
                     <div className="flex items-center gap-1">
                         {Array.from({ length: 5 }).map((_, idx) =>
                             idx < rating ? (

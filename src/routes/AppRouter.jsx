@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom"
 import MainLayout from "../layouts/MainLayout"
 import EmptyLayout from "../layouts/EmptyLayout"
 import HomePage from "../pages/homePage"
+import MovieDetailsPage from "../pages/MovieDetailsPage"
 
 const  AppRouter = () => {
   return (
@@ -10,7 +11,7 @@ const  AppRouter = () => {
         
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
-          <Route path="/dashboard" element={<HomePage />} />
+          <Route path="/film/:slug" element={<MovieDetailsPage />} />
         </Route>
 
         <Route element={<EmptyLayout />}>

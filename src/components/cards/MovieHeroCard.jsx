@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { Clock, ArrowRight, Popcorn } from "lucide-react";
 import { TiStarFullOutline } from "react-icons/ti";
+import { Link } from "react-router-dom";
 
-const MovieHeroCard = ({ title, description, image, director, duration, rating, geners, ageRating, isActive }) => {
+const MovieHeroCard = ({ title, description, image, director, duration, rating, geners, ageRating, slug, isActive }) => {
     return (
         <div className="relative w-full h-full">
 
@@ -24,7 +25,7 @@ const MovieHeroCard = ({ title, description, image, director, duration, rating, 
                 animate={isActive ? { opacity: 1, x: 0 } : { opacity: 0, x: -100 }}
                 transition={{ duration: 0.7, ease: "easeOut" }}
             >
-                <h2 className="text-[clamp(1.5rem,4vw,3rem)] font-bold">{title}</h2>
+                <h2 className="text-[clamp(1.5rem,4vw,3rem)]">{title}</h2>
                 <p className="text-[clamp(0.875rem,2vw,1.25rem)] text-primary">{director}</p>
                 <p className="text-[clamp(0.875rem,2vw,1.25rem)]">{description}</p>
 
@@ -64,25 +65,23 @@ const MovieHeroCard = ({ title, description, image, director, duration, rating, 
 
                 {/* Zobacz więcej */}
                 <div className="mt-2">
-                    <a
-                        href="#"
+                    <Link to={`/film/${slug}`}
                         className="inline-flex items-center gap-2 text-white text-sm sm:text-base md:text-xl border-b-2 border-white hover:border-primary transition-all"
                     >
                         <span>Zobacz więcej</span>
                         <ArrowRight size={16} className="sm:18 md:20" />
-                    </a>
+                    </Link>
                 </div>
 
-                <button className="mt-4 flex items-center justify-center gap-2
-                   w-full sm:w-3/4 md:w-1/2 lg:w-1/3
-                   px-4 py-3 text-xl rounded-3xl text-white
-                   bg-gradient-to-r from-[#791225] via-[#AC1934] to-primary">
+                <button
+                    className="mt-4 flex items-center justify-center gap-2
+                            w-full sm:w-3/4 md:w-1/2 lg:w-1/3 px-4 py-3 text-xl rounded-3xl text-white
+                            bg-linear-to-r from-[#791225] via-[#AC1934] to-primary
+                            transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
                     <span>Kup bilet</span>
                     <Popcorn size={24} />
                 </button>
-
             </motion.div>
-
         </div>
     );
 };

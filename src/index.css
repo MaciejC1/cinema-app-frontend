@@ -16,3 +16,21 @@
   --color-primary: #DF2144;
   --font-bree: "Bree Serif", serif;
 }
+
+.swiper-button-next,
+.swiper-button-prev {
+  color: #DF2144 !important;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  color: #cf072c !important;
+  transform: scale(1.1);
+  transition: all 0.3s ease;
+}
+
+.swiper-button-next::after,
+.swiper-button-prev::after {
+  font-size: 20px !important;
+  font-weight: bold;
+}

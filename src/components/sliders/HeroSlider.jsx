@@ -23,7 +23,6 @@ const HeroSlider = ({ movies }) => {
           spaceBetween={0}
           onSlideChange={(swiper) => setActiveIndex(swiper.activeIndex)}
           speed={0}
-          loop={true}
           className="w-full h-full"
           allowTouchMove={isMobile}
         >

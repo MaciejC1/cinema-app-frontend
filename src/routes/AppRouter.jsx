@@ -3,6 +3,8 @@ import MainLayout from "../layouts/MainLayout"
 import EmptyLayout from "../layouts/EmptyLayout"
 import HomePage from "../pages/homePage"
 import MovieDetailsPage from "../pages/MovieDetailsPage"
+import LoginPage from "../pages/LoginPage"
+import RegisterPage from "../pages/RegisterPage"
 
 const  AppRouter = () => {
   return (
@@ -15,8 +17,8 @@ const  AppRouter = () => {
         </Route>
 
         <Route element={<EmptyLayout />}>
-          <Route path="/login" element={<HomePage />} />
-          <Route path="/register" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
         </Route>
 
       </Routes>

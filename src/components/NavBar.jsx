@@ -34,7 +34,7 @@ const NavBar = () => {
           <Link to="/search" className="hover:text-gray-300">
             <Search className="w-8 h-auto" />
           </Link>
-          <Link to="/profile" className="hover:text-gray-300">
+          <Link to="/login" className="hover:text-gray-300">
             <CircleUser color="#DF2144" strokeWidth={1} className="w-[52px] h-auto" />
           </Link>
         </div>

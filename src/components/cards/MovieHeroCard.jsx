@@ -80,10 +80,12 @@ const MovieHeroCard = ({ title, description, image, director, duration, rating, 
                             transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
                     <span>Kup bilet</span>
                     <Popcorn size={24} />
-                </button>
+                </button> 
             </motion.div>
         </div>
+    
     );
 };
+
 
 export default MovieHeroCard;

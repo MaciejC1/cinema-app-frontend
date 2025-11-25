@@ -4,15 +4,18 @@ import logo from "../assets/logo.png";
 import { Listbox, ListboxOptions, ListboxButton } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import TextInput from "../components/inputs/TextInput";
+import { useRegister } from "../api/hooks/authQueries";
+import { useAuth } from "../context/AuthContext";
 
 const RegisterPage = () => {
-
     const [name, setName] = useState("");
     const [surname, setSuranme] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [phone, setPhone] = useState("");
+
+    const { login } = useAuth();
 
     const cinemas = [
         { id: 1, name: "Cineo Warszawa" },
@@ -21,6 +24,27 @@ const RegisterPage = () => {
     ];
 
     const [selectedCinema, setSelectedCinema] = useState(cinemas[0]);
+
+    const registerMutation = useRegister();
+
+    const handleRegister = () => {
+        registerMutation.mutate(
+            { email, password },
+            {
+                onSuccess: async () => {
+                    try {
+                        await login(email, password);
+                    } catch (err) {
+                        console.error("Błąd logowania po rejestracji:", err);
+                    }
+                },
+                onError: (error) => {
+                    alert("Błąd rejestracji");
+                    console.error(error);
+                },
+            }
+        );
+    };
 
     return (
         <div className="h-full w-full flex items-center justify-center px-4">
@@ -143,7 +167,8 @@ const RegisterPage = () => {
                                 </div>
                             </Listbox>
                         </div>
-                        <button className="w-full mt-7 bg-primary py-4 rounded-md text-2xl transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
+                        <button onClick={handleRegister}
+                            className="w-full mt-7 bg-primary py-4 rounded-md text-2xl transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
                             Zarejestruj się
                         </button>
 

@@ -1,11 +1,24 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import TextInput from "../components/inputs/TextInput";
+import { useAuth } from "../context/AuthContext";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const { login } = useAuth();
+    const navigate = useNavigate();
+    
+    const handleLogin = async () => {
+        try {
+            await login(email, password);
+            navigate("/");
+        } catch (err) {
+            console.error("Błąd logowania:", err);
+            alert("Niepoprawny email lub hasło");
+        }
+    };
 
     return (
         <div className="h-full w-full flex items-center justify-center px-4">
@@ -38,7 +51,9 @@ const LoginPage = () => {
                     </div>
                 </div>
 
-                <button className="w-full bg-primary py-5 rounded-md text-2xl transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
+                <button
+                    onClick={handleLogin}
+                    className="w-full bg-primary py-5 rounded-md text-2xl transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
                     Zaloguj się
                 </button>
 

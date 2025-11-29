@@ -1,11 +1,17 @@
 import { TiStarFullOutline } from "react-icons/ti";
 import { Clock, CalendarDays } from "lucide-react";
 
-const MovieSmallCard = ({ title, rating, duration, image, releaseDate, isUpcoming }) => {
+const formatDuration = (minutes) => {
+    if (!minutes) return "";
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}h ${m}m`;
+};
+
+const MovieSmallCard = ({ title, rating, duration, image, releaseDate, slug, isUpcoming }) => {
     return (
         <div className="group cursor-pointer bg-[#111111] border border-[#404040] rounded-lg overflow-hidden p-1 transition-all duration-300 hover:brightness-110 hover:border-primary">
 
-            {/* Poster */}
             <div className="rounded-lg overflow-hidden aspect-2/3 w-full bg-[#1a1a1a]">
                 <img
                     src={image}
@@ -14,10 +20,8 @@ const MovieSmallCard = ({ title, rating, duration, image, releaseDate, isUpcomin
                 />
             </div>
 
-            {/* Content */}
             <div className="mt-2 px-2">
 
-                {/* Title */}
                 <h3 className="text-lg leading-tight line-clamp-1">
                     {title}
                 </h3>
@@ -25,7 +29,7 @@ const MovieSmallCard = ({ title, rating, duration, image, releaseDate, isUpcomin
                 <div className="flex items-center justify-between mt-8 text-lg">
                     <div className="flex items-center gap-1">
                         <Clock />
-                        <span className="text-primary">{duration}</span>
+                        <span className="text-primary">{formatDuration(duration)}</span>
                     </div>
 
                     {isUpcoming ? (

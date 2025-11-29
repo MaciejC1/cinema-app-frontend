@@ -14,11 +14,23 @@ export const AuthProvider = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const login = async (email, password) => {
-    const res = await api.post("/public/login", { email, password });
+    try {
+      const loginResponse = await api.post("/public/login", { email, password });
 
-    sessionStorage.setItem("user", JSON.stringify(res.data));
-    setUser(res.data);
-    setIsAuthenticated(true);
+      if (loginResponse.status !== 200) {
+        throw new Error("Login failed");
+      }
+      const res = await api.get("/user/auth/me");
+
+      sessionStorage.setItem("user", JSON.stringify(res.data));
+      setUser(res.data);
+      setIsAuthenticated(true);
+
+    } catch (error) {
+      setUser(null);
+      setIsAuthenticated(false);
+      throw error;
+    }
   };
 
   const logout = async () => {
@@ -47,7 +59,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         // 2. jeśli nie ma → sprawdzamy backendem (bo może cookie nadal ważne)
         try {
-          const res = await api.get("/auth/me"); // backend zwróci usera z cookie
+          const res = await api.get("/user/auth/me"); // backend zwróci usera z cookie
           sessionStorage.setItem("user", JSON.stringify(res.data));
           setUser(res.data);
           setIsAuthenticated(true);

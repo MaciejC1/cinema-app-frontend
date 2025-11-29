@@ -3,20 +3,33 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import TextInput from "../components/inputs/TextInput";
 import { useAuth } from "../context/AuthContext";
+import toast from "react-hot-toast";
 
 const LoginPage = () => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
-    
+
     const handleLogin = async () => {
         try {
             await login(email, password);
+            toast.success("Zalogowano pomyślnie!", {
+                style: {
+                    background: "#111111",
+                    color: "#fff",
+                },
+            });
             navigate("/");
         } catch (err) {
             console.error("Błąd logowania:", err);
-            alert("Niepoprawny email lub hasło");
+            toast.error("Niepoprawny email lub hasło", {
+                style: {
+                    background: "#111111",
+                    color: "#fff",
+                },
+            });
+            setPassword("");
         }
     };
 

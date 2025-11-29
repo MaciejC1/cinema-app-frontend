@@ -5,15 +5,17 @@ import HomePage from "../pages/homePage"
 import MovieDetailsPage from "../pages/MovieDetailsPage"
 import LoginPage from "../pages/LoginPage"
 import RegisterPage from "../pages/RegisterPage"
+import RepertoirePage from "../pages/RepertoirePage"
 
-const  AppRouter = () => {
+const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
-        
+
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/film/:slug" element={<MovieDetailsPage />} />
+          <Route path="/repertuar" element={<RepertoirePage />} />
         </Route>
 
         <Route element={<EmptyLayout />}>

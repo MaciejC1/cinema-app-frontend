@@ -11,6 +11,8 @@ import HeroSlider from "../components/sliders/HeroSlider";
 import MovieCarousel from "../components/sliders/MovieCarousel";
 import ContentWrapper from "../layouts/ContentWrapper";
 
+import { useActiveMovies, useUpcomingMovies } from "../api/hooks/movieQueries";
+
 const movies = [
     {
         title: "Until Dawn",
@@ -32,7 +34,7 @@ const movies = [
         geners: ["Action", "Horror"],
         slug: "until-dawn"
     },
-        {
+    {
         title: "Until Dawn",
         description: "W rocznicę zaginięcia siostry, Clover wraz z przyjaciółmi wybiera się w to samo miejsce. Tam ściga ich morderca, a każdy poranek zaczyna się od nowa.",
         image: "https://image.tmdb.org/t/p/original/opSyE1w2QzskFAko0JHtiSrBY6e.jpg",
@@ -99,7 +101,7 @@ export const smallMovies = [
     },
 ];
 
-export const upcomingMovies = [
+export const upcomingMovies2 = [
     {
         title: "Gladiator II",
         duration: "2h 30m",
@@ -139,12 +141,23 @@ export const upcomingMovies = [
 ];
 
 const HomePage = () => {
+    const { data: activeMovies, isLoading: isActiveLoading, error: activeError } = useActiveMovies();
+    const { data: upcomingMovies, isLoading: isUpcomingLoading, error: upcomingError } = useUpcomingMovies();
+
+    if (isActiveLoading || isUpcomingLoading) {
+        return <p className="text-center mt-20">Ładowanie filmów...</p>;
+    }
+
+    if (activeError || upcomingError) {
+        return <p className="text-center mt-20 text-red-500">Błąd wczytywania filmów</p>;
+    }
+
     return (
         <div className="w-full relative">
-            <HeroSlider movies={movies} />
+            <HeroSlider movies={activeMovies} />
 
             <ContentWrapper>
-                <MovieCarousel title="Aktualnie w kinie" movies={smallMovies} />
+                <MovieCarousel title="Aktualnie w kinie" movies={activeMovies} />
             </ContentWrapper>
             <ContentWrapper>
                 <MovieCarousel title="Wkrótce w kinie" movies={upcomingMovies} isUpcoming />

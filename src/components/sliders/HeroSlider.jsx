@@ -28,7 +28,17 @@ const HeroSlider = ({ movies }) => {
         >
           {movies.map((movie, idx) => (
             <SwiperSlide key={idx}>
-              <MovieHeroCard {...movie} isActive={activeIndex === idx} ageRating={18} />
+              <MovieHeroCard
+                title={movie.title}
+                description={movie.description}
+                image={movie.backdrop}
+                director={movie.directors}
+                duration={movie.durationMinutes}
+                rating={movie.averageRating}
+                geners={movie.genres}
+                ageRating={movie.ageRating}
+                slug={movie.slug}
+                isActive={activeIndex === idx} />
             </SwiperSlide>
           ))}
         </Swiper>
@@ -47,11 +57,10 @@ const HeroSlider = ({ movies }) => {
               <span
                 key={idx}
                 onClick={() => swiperRef.current?.swiper.slideTo(idx)}
-                className={`w-3 h-3 rounded-full cursor-pointer transition-all ${
-                  idx === activeIndex
+                className={`w-3 h-3 rounded-full cursor-pointer transition-all ${idx === activeIndex
                     ? "bg-primary shadow-[0_0_10px_#DF2144] scale-125"
                     : "bg-primary/50"
-                } hover:scale-125`}
+                  } hover:scale-125`}
               />
             ))}
           </div>

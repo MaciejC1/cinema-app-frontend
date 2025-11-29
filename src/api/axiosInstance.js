@@ -1,11 +1,11 @@
 import axios from "axios";
 
 const apiWithoutToken = axios.create({
-  baseURL: "http://localhost:8081/api/",
+  baseURL: "http://localhost:8081/api",
 });
 
 const apiWithToken = axios.create({
-  baseURL: "http://localhost:8081/api/",
+  baseURL: "http://localhost:8081/api",
   withCredentials: true,
 });
 
@@ -22,6 +22,7 @@ apiWithToken.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    // jeśli access token wygasł
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve) => {
@@ -33,8 +34,9 @@ apiWithToken.interceptors.response.use(
       isRefreshing = true;
 
       try {
+        // odśwież token
         await apiWithoutToken.post(
-          "/auth/public/refresh-token",
+          "/public/auth/refresh",
           {},
           { withCredentials: true }
         );

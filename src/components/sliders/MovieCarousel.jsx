@@ -45,7 +45,14 @@ const MovieCarousel = ({ title, movies, isUpcoming = false }) => {
       >
         {movies.map((movie, idx) => (
           <SwiperSlide key={idx}>
-            <MovieSmallCard {...movie} isUpcoming={isUpcoming} />
+            <MovieSmallCard
+            title={movie.title}
+            rating={movie.averageRating}
+            duration={movie.durationMinutes}
+            image={movie.poster}
+            releaseDate={movie.releaseDate ?? ""}
+            slug={movie.slug}
+            isUpcoming={isUpcoming} />
           </SwiperSlide>
         ))}
       </Swiper>

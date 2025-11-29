@@ -3,6 +3,13 @@ import { Clock, ArrowRight, Popcorn } from "lucide-react";
 import { TiStarFullOutline } from "react-icons/ti";
 import { Link } from "react-router-dom";
 
+const formatDuration = (minutes) => {
+    if (!minutes) return "";
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return `${h}h ${m}m`;
+};
+
 const MovieHeroCard = ({ title, description, image, director, duration, rating, geners, ageRating, slug, isActive }) => {
     return (
         <div className="relative w-full h-full">
@@ -27,17 +34,17 @@ const MovieHeroCard = ({ title, description, image, director, duration, rating, 
             >
                 <h2 className="text-[clamp(1.5rem,4vw,3rem)]">{title}</h2>
                 <p className="text-[clamp(0.875rem,2vw,1.25rem)] text-primary">{director}</p>
-                <p className="text-[clamp(0.875rem,2vw,1.25rem)]">{description}</p>
+                <p className="text-[clamp(0.875rem,2vw,1.25rem)] line-clamp-4">{description}</p>
 
                 {/* Czas i ocena */}
                 <div className="flex flex-wrap items-center gap-4 mt-2">
                     <div className="flex items-center gap-2">
                         <Clock size={20} />
-                        <p className="text-primary">{duration}</p>
+                        <p className="text-primary">{formatDuration(duration)}</p>
                     </div>
                     {ageRating && (
                         <div className="flex items-center gap-2 bg-black border-primary border-2 px-2 py-[2px] rounded-2xl text-sm">
-                            <span className="font-semibold">{ageRating}+</span>
+                            <span className="font-semibold">{ageRating}</span>
                         </div>
                     )}
                     <div className="flex items-center gap-1">

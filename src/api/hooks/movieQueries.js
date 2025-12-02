@@ -11,6 +11,11 @@ const fetchUpcomingMovies = async () => {
     return data;
 };
 
+const fetchMovieBySlug = async (slug) => {
+    const { data } = await apiWithoutToken.get(`/public/movie/slug/${slug}`);
+    return data;
+};
+
 export const useActiveMovies = () => {
     return useQuery({
         queryKey: ["active-movies"],
@@ -23,6 +28,15 @@ export const useUpcomingMovies = () => {
     return useQuery({
         queryKey: ["upcoming-movies"],
         queryFn: fetchUpcomingMovies,
+        staleTime: 1000 * 60 * 5,
+    });
+};
+
+export const useMovieBySlug = (slug) => {
+    return useQuery({
+        queryKey: ["movie", slug],
+        queryFn: () => fetchMovieBySlug(slug),
+        enabled: !!slug,
         staleTime: 1000 * 60 * 5,
     });
 };

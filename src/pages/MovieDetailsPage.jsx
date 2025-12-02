@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Clock, Popcorn, Play, X } from "lucide-react";
 import { TiStarFullOutline } from "react-icons/ti";
 import ContentWrapper from "../layouts/ContentWrapper";
+import { useMovieBySlug } from "../api/hooks/movieQueries";
+import { useParams } from "react-router-dom";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -12,30 +14,23 @@ import "swiper/css/pagination";
 
 const MovieDetailsPage = () => {
     const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+    const { slug } = useParams();
+    const { data: movie, isLoading, isError } = useMovieBySlug(slug);
 
-    const movie = {
-        title: "Until Dawn",
-        description: "W rocznicę zaginięcia siostry, Clover wraz z przyjaciółmi wybiera się w to samo miejsce. Tam ściga ich morderca, a każdy poranek zaczyna się od nowa.",
-        description2: "Rok po tajemniczym zniknięciu swojej siostry Melanie, Clover i jej przyjaciele udają się do odległej doliny, w której zniknęła, w poszukiwaniu odpowiedzi. Przeszukując opuszczone centrum dla zwiedzających, odkrywają, że są prześladowani przez zamaskowanego zabójcę i mordowani jeden po drugim... tylko po to, aby obudzić się i znaleźć się z powrotem na początku tego samego wieczoru.",
-        image: "https://image.tmdb.org/t/p/original/opSyE1w2QzskFAko0JHtiSrBY6e.jpg",
-        director: "David F. Sandberg",
-        duration: "1h 48min",
-        rating: 5,
-        geners: ["Action", "Horror"],
-        versions: ["Napisy", "Lektor"],
-        slug: "until-dawn",
-        ageRating: "18",
-        trailer: "https://www.youtube.com/embed/2b3vBaINZ7w",
-        thumbnailImage: "https://img.youtube.com/vi/2b3vBaINZ7w/maxresdefault.jpg",
-        country: "USA",
-        data: "20.06.2025",
-        stills: [
-            "https://image.tmdb.org/t/p/original/z5gEVVNjvCbz3lT33fnQNYgQKak.jpg",
-            "https://image.tmdb.org/t/p/original/17096PNx8qZYraGSuk9gHVgoBxT.jpg",
-            "https://image.tmdb.org/t/p/original/o5knWwm1fxCugG5a6saGeqL1tN7.jpg",
-            "https://image.tmdb.org/t/p/original/yXtLWhGvvP2csO7iwlUXl3TtjPt.jpg",
-            "https://image.tmdb.org/t/p/original/hJeMG7MXsgiAihv1EmMA8zj3L34.jpg"
-        ]
+
+    if (isLoading) return <div className="text-center mt-40 text-white">Ładowanie...</div>;
+    if (isError || !movie) return <div className="text-center mt-40 text-red-500">Błąd ładowania danych filmu</div>;
+
+
+    const backdrop = movie.media?.find(m => m.mediaType === "backdrop");
+    const trailer = movie.media?.find(m => m.mediaType === "trailer");
+    const thumbnailImage = movie.media?.find(m => m.mediaType === "trailer_thumbnail");
+
+    const formatDuration = (minutes) => {
+        if (!minutes) return "";
+        const h = Math.floor(minutes / 60);
+        const m = minutes % 60;
+        return `${h}h ${m}m`;
     };
 
     return (
@@ -46,7 +41,7 @@ const MovieDetailsPage = () => {
                         <div className="relative w-full h-full">
                             {/* Obraz filmu */}
                             <img
-                                src={movie.image}
+                                src={backdrop?.url}
                                 alt={movie.title}
                                 className="w-full h-full object-cover object-center"
                             />
@@ -60,35 +55,35 @@ const MovieDetailsPage = () => {
                                 {/* Lewa kolumna - opis filmu */}
                                 <div className="flex flex-col gap-2 md:w-2/5">
                                     <h2 className="text-[clamp(1.5rem,4vw,3rem)]">{movie.title}</h2>
-                                    <p className="text-[clamp(0.875rem,2vw,1.25rem)] text-primary">{movie.director}</p>
-                                    <p className="text-[clamp(0.875rem,2vw,1.25rem)]">{movie.description}</p>
+                                    <p className="text-[clamp(0.875rem,2vw,1.25rem)] text-primary">{movie.directors}</p>
+                                    <p className="text-[clamp(0.875rem,2vw,1.25rem)] line-clamp-4">{movie.description}</p>
 
                                     {/* Czas i ocena */}
                                     <div className="flex flex-wrap items-center gap-4 mt-2">
                                         <div className="flex items-center gap-2">
                                             <Clock size={20} />
-                                            <p className="text-primary">{movie.duration}</p>
+                                            <p className="text-primary">{formatDuration(movie.durationMinutes)}</p>
                                         </div>
                                         {movie.ageRating && (
                                             <div className="flex items-center gap-2 bg-black border-primary border-2 px-2 py-[2px] rounded-2xl text-sm">
-                                                <span className="font-semibold">{movie.ageRating}+</span>
+                                                <span className="font-semibold">{movie.ageRating}</span>
                                             </div>
                                         )}
                                         <div className="flex items-center gap-1">
                                             {Array.from({ length: 5 }).map((_, idx) =>
-                                                idx < movie.rating ? (
+                                                idx < movie.averageRating ? (
                                                     <TiStarFullOutline key={idx} className="text-primary" size={20} />
                                                 ) : (
                                                     <TiStarFullOutline key={idx} className="text-[#ACACAC]" size={20} />
                                                 )
                                             )}
-                                            <span className="text-sm text-[#ACACAC]">(222)</span>
+                                            <span className="text-sm text-[#ACACAC]">({movie.ratingCount})</span>
                                         </div>
                                     </div>
 
                                     {/* Gatunki */}
                                     <div className="flex flex-wrap gap-2 mt-2">
-                                        {movie.geners.map((genre, idx) => (
+                                        {movie.genres?.map((genre, idx) => (
                                             <span
                                                 key={idx}
                                                 className="bg-black border-2 border-primary text-white px-2 py-1 rounded-full text-xs sm:text-sm"
@@ -98,16 +93,23 @@ const MovieDetailsPage = () => {
                                         ))}
                                     </div>
 
-                                    {/* Wersje */}
+
                                     <div className="flex flex-wrap gap-2 mt-2">
-                                        {movie.versions.map((version, idx) => (
-                                            <span
-                                                key={idx}
-                                                className="bg-black border-2 border-white text-white px-2 py-1 rounded-full text-xs sm:text-sm"
-                                            >
-                                                {version}
+                                        {movie.hasSubtitles && (
+                                            <span className="bg-black border-2 border-white text-white px-2 py-1 rounded-full text-xs sm:text-sm">
+                                                Napisy
                                             </span>
-                                        ))}
+                                        )}
+                                        {movie.hasLector && (
+                                            <span className="bg-black border-2 border-white text-white px-2 py-1 rounded-full text-xs sm:text-sm">
+                                                Lektor
+                                            </span>
+                                        )}
+                                        {movie.hasDubbing && (
+                                            <span className="bg-black border-2 border-white text-white px-2 py-1 rounded-full text-xs sm:text-sm">
+                                                Dubbing
+                                            </span>
+                                        )}
                                     </div>
 
                                     <button
@@ -128,7 +130,7 @@ const MovieDetailsPage = () => {
                                     >
                                         {/* Thumbnail */}
                                         <img
-                                            src={movie.thumbnailImage}
+                                            src={thumbnailImage.url}
                                             alt="Trailer thumbnail"
                                             className="w-full h-full object-cover"
                                         />
@@ -177,7 +179,7 @@ const MovieDetailsPage = () => {
                                 <iframe
                                     width="100%"
                                     height="100%"
-                                    src={`${movie.trailer}?autoplay=1`}
+                                    src={`${trailer.url}?autoplay=1`}
                                     title="Movie Trailer"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                     allowFullScreen
@@ -189,12 +191,11 @@ const MovieDetailsPage = () => {
                 )}
 
 
-
             </div>
             <ContentWrapper>
                 <div className="flex flex-col">
                     <span className="text-[clamp(1.5rem,4vw,3rem)]"> Więcej informacji o filmie</span>
-                    <p className="text-[clamp(0.875rem,2vw,1.25rem)] w-3/4">{movie.description2}</p>
+                    <p className="text-[clamp(0.875rem,2vw,1.25rem)] w-3/4">{movie.description}</p>
 
                     <div className="flex items-center justify-start gap-x-10 mt-10">
                         {/* Lewa kolumna */}
@@ -205,11 +206,11 @@ const MovieDetailsPage = () => {
                             </div>
                             <div className="flex">
                                 <span className="text-primary w-[150px]">Data premiery:</span>
-                                <span>{movie.data}</span>
+                                <span>{movie.releaseDate}</span>
                             </div>
                             <div className="flex">
                                 <span className="text-primary w-[150px]">Reżyser:</span>
-                                <span>{movie.director}</span>
+                                <span>{movie.directors}</span>
                             </div>
                             <div className="flex">
                                 <span className="text-primary w-[150px]">Kraj produkcji:</span>
@@ -224,19 +225,27 @@ const MovieDetailsPage = () => {
                         <div className="flex flex-col gap-1 text-[clamp(0.875rem,2vw,1.25rem)]">
                             <div className="flex">
                                 <span className="text-primary w-56">Gatunek:</span>
-                                <span>{movie.geners.join(", ")}</span>
+                                <span>{movie.genres.join(", ")}</span>
                             </div>
                             <div className="flex">
                                 <span className="text-primary w-56">Dostępne wersje:</span>
-                                <span>{movie.versions.join(", ")}</span>
+                                <span>
+                                    {[
+                                        movie.hasDubbing && "Dubbing",
+                                        movie.hasLector && "Lektor",
+                                        movie.hasSubtitles && "Napisy"
+                                    ]
+                                        .filter(Boolean) // usuwa wartości false
+                                        .join(", ")}
+                                </span>
                             </div>
                             <div className="flex">
                                 <span className="text-primary w-56">Czas trwania filmu:</span>
-                                <span>{movie.duration}</span>
+                                <span>{formatDuration(movie.durationMinutes)}</span>
                             </div>
                             <div className="flex">
                                 <span className="text-primary w-56">Ograniczenie wiekowe:</span>
-                                <span>{movie.ageRating}+</span>
+                                <span>{movie.ageRating}</span>
                             </div>
                         </div>
                     </div>
@@ -257,17 +266,19 @@ const MovieDetailsPage = () => {
                             pagination={false}
                             className="rounded-2xl"
                         >
-                            {movie.stills.map((image, idx) => (
-                                <SwiperSlide key={idx}>
-                                    <div className="overflow-hidden rounded-xl shadow-lg group aspect-video">
-                                        <img
-                                            src={image}
-                                            alt={`Kadr ${idx + 1}`}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                                        />
-                                    </div>
-                                </SwiperSlide>
-                            ))}
+                            {movie.media
+                                .filter((item) => item.mediaType === "still")
+                                .map((image, idx) => (
+                                    <SwiperSlide key={idx}>
+                                        <div className="overflow-hidden rounded-xl shadow-lg group aspect-video">
+                                            <img
+                                                src={image.url}
+                                                alt={`Kadr ${idx + 1}`}
+                                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                            />
+                                        </div>
+                                    </SwiperSlide>
+                                ))}
                         </Swiper>
                     </div>
 

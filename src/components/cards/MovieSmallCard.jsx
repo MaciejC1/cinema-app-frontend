@@ -1,16 +1,19 @@
 import { TiStarFullOutline } from "react-icons/ti";
 import { Clock, CalendarDays } from "lucide-react";
-
-const formatDuration = (minutes) => {
-    if (!minutes) return "";
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return `${h}h ${m}m`;
-};
+import { useNavigate } from "react-router-dom";
+import { formatDuration } from "../../utils/format";
 
 const MovieSmallCard = ({ title, rating, duration, image, releaseDate, slug, isUpcoming }) => {
+
+    const navigate = useNavigate();
+
+    const handleClick = () => {
+        navigate(`/film/${slug}`);
+    };
+
     return (
-        <div className="group cursor-pointer bg-[#111111] border border-[#404040] rounded-lg overflow-hidden p-1 transition-all duration-300 hover:brightness-110 hover:border-primary">
+        <div onClick={handleClick}
+            className="group cursor-pointer bg-[#111111] border border-[#404040] rounded-lg overflow-hidden p-1 transition-all duration-300 hover:brightness-110 hover:border-primary">
 
             <div className="rounded-lg overflow-hidden aspect-2/3 w-full bg-[#1a1a1a]">
                 <img

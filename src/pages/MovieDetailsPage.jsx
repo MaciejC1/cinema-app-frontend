@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Clock, Popcorn, Play, X } from "lucide-react";
+import { Clock, Popcorn, Play, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { TiStarFullOutline } from "react-icons/ti";
 import ContentWrapper from "../layouts/ContentWrapper";
 import { useMovieBySlug } from "../api/hooks/movieQueries";
 import { useParams } from "react-router-dom";
+import { formatDuration } from "../utils/format";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -11,26 +12,45 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
+import LoadingSpinner from "../components/loading_components/LoadingSpinner";
+import ErrorLoading from "../components/loading_components/ErrorLoading";
 
 const MovieDetailsPage = () => {
     const [isTrailerOpen, setIsTrailerOpen] = useState(false);
     const { slug } = useParams();
     const { data: movie, isLoading, isError } = useMovieBySlug(slug);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
+    if (isLoading) {
+        return (
+            <LoadingSpinner
+                text="Ładowanie szczegółów filmu..."
+                size={60}
+            />
+        );
+    }
 
-    if (isLoading) return <div className="text-center mt-40 text-white">Ładowanie...</div>;
-    if (isError || !movie) return <div className="text-center mt-40 text-red-500">Błąd ładowania danych filmu</div>;
-
+    if (isError || !movie) {
+        return (
+            <ErrorLoading message="Nie udało się załadować danych filmu" />
+        );
+    }
 
     const backdrop = movie.media?.find(m => m.mediaType === "backdrop");
     const trailer = movie.media?.find(m => m.mediaType === "trailer");
     const thumbnailImage = movie.media?.find(m => m.mediaType === "trailer_thumbnail");
+    const galleryImages = movie.media?.filter(m => m.mediaType === "still") || [];
 
-    const formatDuration = (minutes) => {
-        if (!minutes) return "";
-        const h = Math.floor(minutes / 60);
-        const m = minutes % 60;
-        return `${h}h ${m}m`;
+    const handlePrevImage = () => {
+        setSelectedImageIndex((prev) =>
+            prev === 0 ? galleryImages.length - 1 : prev - 1
+        );
+    };
+
+    const handleNextImage = () => {
+        setSelectedImageIndex((prev) =>
+            prev === galleryImages.length - 1 ? 0 : prev + 1
+        );
     };
 
     return (
@@ -169,7 +189,7 @@ const MovieDetailsPage = () => {
                             {/* Przycisk zamknięcia */}
                             <button
                                 onClick={() => setIsTrailerOpen(false)}
-                                className="absolute -top-12 right-0 text-white hover:text-primary transition-colors duration-200"
+                                className="absolute -top-12 right-0 text-white hover:text-primary transition-colors duration-200 cursor-pointer"
                             >
                                 <X size={40} />
                             </button>
@@ -235,7 +255,7 @@ const MovieDetailsPage = () => {
                                         movie.hasLector && "Lektor",
                                         movie.hasSubtitles && "Napisy"
                                     ]
-                                        .filter(Boolean) // usuwa wartości false
+                                        .filter(Boolean)
                                         .join(", ")}
                                 </span>
                             </div>
@@ -249,6 +269,7 @@ const MovieDetailsPage = () => {
                             </div>
                         </div>
                     </div>
+
                     {/* Karuzela zdjęć z filmu */}
                     <div className="mt-16">
                         <h2 className="text-[clamp(1.25rem,3vw,2rem)] mb-4">Galeria z filmu</h2>
@@ -270,7 +291,7 @@ const MovieDetailsPage = () => {
                                 .filter((item) => item.mediaType === "still")
                                 .map((image, idx) => (
                                     <SwiperSlide key={idx}>
-                                        <div className="overflow-hidden rounded-xl shadow-lg group aspect-video">
+                                        <div className="overflow-hidden rounded-xl shadow-lg group aspect-video cursor-pointer" onClick={() => setSelectedImageIndex(idx)}>
                                             <img
                                                 src={image.url}
                                                 alt={`Kadr ${idx + 1}`}
@@ -282,9 +303,55 @@ const MovieDetailsPage = () => {
                         </Swiper>
                     </div>
 
-
                 </div>
             </ContentWrapper>
+            {selectedImageIndex !== null && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-4"
+                    onClick={() => setSelectedImageIndex(null)}
+                >
+                    <div
+                        className="relative w-full h-full flex items-center justify-center"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Przycisk zamknięcia */}
+                        <button
+                            onClick={() => setSelectedImageIndex(null)}
+                            className="absolute top-4 right-4 text-white hover:text-primary transition-colors duration-200 z-10 cursor-pointer"
+                        >
+                            <X size={40} />
+                        </button>
+
+                        {/* Strzałka w lewo */}
+                        <button
+                            onClick={handlePrevImage}
+                            className="absolute left-4 text-white hover:text-primary transition-colors duration-200 z-10 bg-black bg-opacity-50 rounded-full p-3 hover:bg-opacity-70 cursor-pointer"
+                        >
+                            <ChevronLeft size={40} />
+                        </button>
+
+                        {/* Zdjęcie */}
+                        <img
+                            src={galleryImages[selectedImageIndex]?.url}
+                            alt={`Kadr ${selectedImageIndex + 1}`}
+                            className="max-w-full max-h-full w-auto h-auto object-contain rounded-lg"
+                        />
+
+                        {/* Strzałka w prawo */}
+                        <button
+                            onClick={handleNextImage}
+                            className="absolute right-4 text-white hover:text-primary transition-colors duration-200 z-10 bg-black bg-opacity-50 rounded-full p-3 hover:bg-opacity-70 cursor-pointer"
+                        >
+                            <ChevronRight size={40} />
+                        </button>
+
+                        {/* Licznik zdjęć */}
+                        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 text-white bg-black bg-opacity-50 px-4 py-2 rounded-full">
+                            {selectedImageIndex + 1} / {galleryImages.length}
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

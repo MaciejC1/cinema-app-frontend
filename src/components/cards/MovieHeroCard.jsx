@@ -2,13 +2,7 @@ import { motion } from "framer-motion";
 import { Clock, ArrowRight, Popcorn } from "lucide-react";
 import { TiStarFullOutline } from "react-icons/ti";
 import { Link } from "react-router-dom";
-
-const formatDuration = (minutes) => {
-    if (!minutes) return "";
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    return `${h}h ${m}m`;
-};
+import { formatDuration } from "../../utils/format";
 
 const MovieHeroCard = ({ title, description, image, director, duration, rating, geners, ageRating, slug, isActive }) => {
     return (

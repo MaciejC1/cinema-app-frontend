@@ -16,6 +16,24 @@ const fetchMovieBySlug = async (slug) => {
     return data;
 };
 
+const fetchMovieShowtimes = async (slug, cinemaId) => {
+  const { data } = await apiWithoutToken.get(
+    "/public/movie/showtimes",
+    {
+      params: { slug, cinemaId },
+    }
+  );
+  return data;
+};
+
+export const useMovieShowtimes = (slug, cinemaId) => {
+  return useQuery({
+    queryKey: ["movie-showtimes", slug, cinemaId],
+    queryFn: () => fetchMovieShowtimes(slug, cinemaId),
+    enabled: Boolean(cinemaId && slug),
+  });
+};
+
 export const useActiveMovies = () => {
     return useQuery({
         queryKey: ["active-movies"],

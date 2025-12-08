@@ -5,6 +5,9 @@ import ContentWrapper from "../layouts/ContentWrapper";
 import { useMovieBySlug } from "../api/hooks/movieQueries";
 import { useParams } from "react-router-dom";
 import { formatDuration } from "../utils/format";
+import { useCinema } from "../context/CinemaContext";
+import { useMovieShowtimes } from "../api/hooks/movieQueries";
+import MovieShowtimesSection from "../components/sections/MovieShowtimesSection";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -17,11 +20,18 @@ import ErrorLoading from "../components/loading_components/ErrorLoading";
 
 const MovieDetailsPage = () => {
     const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+    const { cinema } = useCinema();
     const { slug } = useParams();
     const { data: movie, isLoading, isError } = useMovieBySlug(slug);
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
-    if (isLoading) {
+    const {
+        data: showtimes,
+        isLoading: showtimesLoading,
+        isError: showtimesError
+    } = useMovieShowtimes(slug, cinema?.id);
+
+    if (isLoading || showtimesLoading || !cinema ) {
         return (
             <LoadingSpinner
                 text="Ładowanie szczegółów filmu..."
@@ -30,7 +40,7 @@ const MovieDetailsPage = () => {
         );
     }
 
-    if (isError || !movie) {
+    if (isError || showtimesError || !movie) {
         return (
             <ErrorLoading message="Nie udało się załadować danych filmu" />
         );
@@ -302,9 +312,24 @@ const MovieDetailsPage = () => {
                                 ))}
                         </Swiper>
                     </div>
+                </div>
 
+            </ContentWrapper>
+
+            <ContentWrapper>
+                <div className="mt-8">
+                    <span className="text-[clamp(1.5rem,4vw,3rem)] flex gap-x-2">
+                        Seanse dostępne w kinie:
+                        <span className="text-primary">{cinema?.name}</span>
+                    </span>
+
+                    {showtimes.showtimes.length > 0 && (
+                        <MovieShowtimesSection showtimes={showtimes.showtimes} />
+                    )}
                 </div>
             </ContentWrapper>
+
+
             {selectedImageIndex !== null && (
                 <div
                     className="fixed inset-0 bg-black bg-opacity-95 z-50 flex items-center justify-center p-4"

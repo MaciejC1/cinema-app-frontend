@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { Listbox, ListboxOptions, ListboxButton } from "@headlessui/react";
@@ -6,26 +6,27 @@ import { ChevronDown } from "lucide-react";
 import TextInput from "../components/inputs/TextInput";
 import { useRegister } from "../api/hooks/authQueries";
 import { useAuth } from "../context/AuthContext";
+import { useCinemas } from "../api/hooks/cinemaQueries";
 
 const RegisterPage = () => {
     const [name, setName] = useState("");
-    const [surname, setSuranme] = useState("");
+    const [surname, setSurname] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [phone, setPhone] = useState("");
 
+    const { data: cinemas = [], isLoading } = useCinemas();
     const { login } = useAuth();
 
-    const cinemas = [
-        { id: 1, name: "Cineo Warszawa" },
-        { id: 2, name: "Cineo Kraków" },
-        { id: 3, name: "Cineo Kielce" },
-    ];
-
-    const [selectedCinema, setSelectedCinema] = useState(cinemas[0]);
+    const [selectedCinema, setSelectedCinema] = useState(null);
 
     const registerMutation = useRegister();
+    useEffect(() => {
+        if (cinemas.length > 0 && !selectedCinema) {
+            setSelectedCinema(cinemas[0]);
+        }
+    }, [cinemas, selectedCinema]);
 
     const handleRegister = () => {
         registerMutation.mutate(
@@ -54,20 +55,19 @@ const RegisterPage = () => {
                 </h1>
 
                 <div className="flex gap-12">
+                    {/* LEWA KOLUMNA */}
                     <div className="w-full flex flex-col gap-y-2">
                         <TextInput
                             label="Imię"
-                            type="name"
                             placeholder="Jan"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                         />
                         <TextInput
                             label="Nazwisko"
-                            type="surename"
                             placeholder="Kowalski"
                             value={surname}
-                            onChange={(e) => setSuranme(e.target.value)}
+                            onChange={(e) => setSurname(e.target.value)}
                         />
                         <TextInput
                             label="Email"
@@ -94,70 +94,54 @@ const RegisterPage = () => {
 
                     <div className="w-1 bg-primary" />
 
+                    {/* PRAWA KOLUMNA */}
                     <div className="w-full flex flex-col">
-                        <span>Data urodzenia</span>
-                        <div className="flex w-full gap-x-2">
-                            <input
-                                type="text"
-                                placeholder="DD"
-                                maxLength={2}
-                                pattern="\d*"
-                                inputMode="numeric"
-                                className="text-center w-1/3 bg-[#0C0C0C] border-2 border-[#505050] px-2 py-4 rounded-md placeholder:text-[#202020] focus:outline-none focus:border-primary"
-                            />
-                            <input
-                                type="text"
-                                placeholder="MM"
-                                maxLength={2}
-                                pattern="\d*"
-                                inputMode="numeric"
-                                className="text-center w-1/3 bg-[#0C0C0C] border-2 border-[#505050] px-2 py-4 rounded-md placeholder:text-[#202020] focus:outline-none focus:border-primary"
-                            />
-                            <input
-                                type="text"
-                                placeholder="YYYY"
-                                maxLength={4}
-                                pattern="\d*"
-                                inputMode="numeric"
-                                className="text-center w-1/3 bg-[#0C0C0C] border-2 border-[#505050] px-2 py-4 rounded-md placeholder:text-[#202020] focus:outline-none focus:border-primary"
-                            />
-                        </div>
-                        <div className="flex flex-col mt-2">
-                            <span>Telefon (opcjonalnie)</span>
-                            <input
-                                type="text"
-                                placeholder="123 456 789"
-                                value={phone}
-                                onChange={(e) => {
-                                    let digits = e.target.value.replace(/\D/g, "");
-                                    if (digits.length > 3 && digits.length <= 6) {
-                                        digits = digits.slice(0, 3) + " " + digits.slice(3);
-                                    } else if (digits.length > 6) {
-                                        digits = digits.slice(0, 3) + " " + digits.slice(3, 6) + " " + digits.slice(6, 9);
-                                    }
-                                    setPhone(digits);
-                                }}
-                                maxLength={11}
-                                inputMode="numeric"
-                                className="w-full bg-[#0C0C0C] border-2 border-[#505050] px-2 py-4 rounded-md placeholder:text-[#202020] focus:outline-none focus:border-primary"
-                            />
-                        </div>
-                        <div className="flex flex-col mt-2">
+                        <span>Telefon (opcjonalnie)</span>
+                        <input
+                            type="text"
+                            placeholder="123 456 789"
+                            value={phone}
+                            onChange={(e) => {
+                                let digits = e.target.value.replace(/\D/g, "");
+                                if (digits.length > 3 && digits.length <= 6) {
+                                    digits = digits.slice(0, 3) + " " + digits.slice(3);
+                                } else if (digits.length > 6) {
+                                    digits =
+                                        digits.slice(0, 3) +
+                                        " " +
+                                        digits.slice(3, 6) +
+                                        " " +
+                                        digits.slice(6, 9);
+                                }
+                                setPhone(digits);
+                            }}
+                            maxLength={11}
+                            className="w-full bg-[#0C0C0C] border-2 border-[#505050] px-2 py-4 rounded-md focus:outline-none focus:border-primary"
+                        />
+
+                        {/* ✅ WYBÓR KINA */}
+                        <div className="flex flex-col mt-4">
                             <span>Wybierz kino</span>
+
                             <Listbox value={selectedCinema} onChange={setSelectedCinema}>
                                 <div className="relative">
-                                    <ListboxButton className="w-full bg-[#0C0C0C] border-2 border-[#505050] cursor-pointer px-4 py-4 rounded-md text-left focus:outline-none focus:border-primary flex justify-between items-center">
-                                        {selectedCinema.name}
-                                        <ChevronDown size={20} className="text-gray-400" />
+                                    <ListboxButton className="w-full bg-[#0C0C0C] border-2 border-[#505050] px-4 py-4 rounded-md flex justify-between items-center">
+                                        {selectedCinema
+                                            ? selectedCinema.name
+                                            : "Wybierz kino"}
+                                        <ChevronDown size={20} />
                                     </ListboxButton>
 
-                                    <ListboxOptions className="absolute z-10 mt-1 w-full bg-[#0C0C0C] border-2 border-[#505050] rounded-md max-h-60 overflow-auto shadow-lg">
+                                    <ListboxOptions className="absolute z-10 w-full mt-1 bg-[#0C0C0C] border-2 border-[#505050] rounded-md max-h-60 overflow-auto">
                                         {cinemas.map((cinema) => (
                                             <Listbox.Option
                                                 key={cinema.id}
                                                 value={cinema}
                                                 className={({ active }) =>
-                                                    `cursor-pointer px-4 py-2 ${active ? "bg-primary text-white" : "text-white"}`
+                                                    `px-4 py-2 cursor-pointer ${active
+                                                        ? "bg-primary text-white"
+                                                        : "text-white"
+                                                    }`
                                                 }
                                             >
                                                 {cinema.name}
@@ -167,26 +151,30 @@ const RegisterPage = () => {
                                 </div>
                             </Listbox>
                         </div>
-                        <button onClick={handleRegister}
-                            className="w-full mt-7 bg-primary py-4 rounded-md text-2xl transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
+
+                        <button
+                            onClick={handleRegister}
+                            disabled={!selectedCinema}
+                            className="w-full mt-7 bg-primary py-4 rounded-md text-2xl transition-all hover:brightness-125 disabled:opacity-50"
+                        >
                             Zarejestruj się
                         </button>
 
-                        <Link to="/" className="flex items-center justify-center mt-7">
-                            <img
-                                src={logo}
-                                alt="Logo"
-                                className="h-20 w-auto object-contain"
-                            />
+                        <Link to="/" className="flex justify-center mt-7">
+                            <img src={logo} alt="Logo" className="h-20" />
                         </Link>
                     </div>
                 </div>
-                <h1 className="text-xl text-center flex flex-col">
-                    Masz juz konto? <Link to="/login" className="text-primary hover:underline">Zaloguj się</Link>
+
+                <h1 className="text-xl text-center">
+                    Masz już konto?{" "}
+                    <Link to="/login" className="text-primary hover:underline">
+                        Zaloguj się
+                    </Link>
                 </h1>
             </div>
         </div>
     );
-}
+};
 
 export default RegisterPage;

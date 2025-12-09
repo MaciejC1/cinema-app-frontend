@@ -30,7 +30,7 @@ const MovieShowtimesSection = ({ showtimes }) => {
                         {showtimesByDate[date].map((show) => (
                             <div
                                 key={show.id}
-                                className="bg-[#111111] border-2 border-primary text-white w-30 h-auto py-4 flex flex-col items-center justify-center rounded-lg cursor-pointer"
+                                className="bg-[#111111] border-2 border-primary text-white w-30 h-auto py-4 flex flex-col items-center justify-center rounded-lg cursor-pointer hover:bg-primary hover:border-white transition-colors duration-200"
                             >
                                 {/* Godzina */}
                                 <span className="text-2xl">

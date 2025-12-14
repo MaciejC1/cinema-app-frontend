@@ -323,7 +323,7 @@ const MovieDetailsPage = () => {
                         <span className="text-primary">{cinema?.name}</span>
                     </span>
 
-                    {showtimes.showtimes.length > 0 && (
+                    {showtimes?.showtimes?.length > 0 && (
                         <MovieShowtimesSection showtimes={showtimes.showtimes} />
                     )}
                 </div>

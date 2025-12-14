@@ -4,15 +4,20 @@ import { Plus } from "lucide-react";
 const MovieShowtimesSection = ({ showtimes }) => {
     const [showAllDays, setShowAllDays] = useState(false);
 
-    const showtimesByDate = showtimes.reduce((acc, show) => {
-        const date = new Date(show.startTime).toLocaleDateString("pl-PL", {
+    const sortedShowtimes = [...showtimes].sort(
+        (a, b) => new Date(a.startTime) - new Date(b.startTime)
+    );
+
+    const showtimesByDate = sortedShowtimes.reduce((acc, show) => {
+        const dateKey = new Date(show.startTime).toLocaleDateString("pl-PL", {
             weekday: "long",
             day: "2-digit",
             month: "2-digit",
             year: "numeric"
         });
-        if (!acc[date]) acc[date] = [];
-        acc[date].push(show);
+
+        if (!acc[dateKey]) acc[dateKey] = [];
+        acc[dateKey].push(show);
         return acc;
     }, {});
 
@@ -25,14 +30,16 @@ const MovieShowtimesSection = ({ showtimes }) => {
                 <div key={date} className="flex flex-col gap-2">
                     <h3 className="text-white text-2xl">{date}</h3>
 
-                    {/* Prostokąt z kartami seansów */}
                     <div className="bg-[#111111] p-4 rounded-xl flex flex-wrap gap-2">
                         {showtimesByDate[date].map((show) => (
                             <div
                                 key={show.id}
-                                className="bg-[#111111] border-2 border-primary text-white w-30 h-auto py-4 flex flex-col items-center justify-center rounded-lg cursor-pointer hover:bg-primary hover:border-white transition-colors duration-200"
+                                className="bg-[#111111] border-2 border-primary
+                                           text-white w-40 py-4 flex flex-col
+                                           items-center justify-center rounded-lg
+                                           cursor-pointer hover:bg-primary
+                                           hover:border-white transition-colors duration-200"
                             >
-                                {/* Godzina */}
                                 <span className="text-2xl">
                                     {new Date(show.startTime).toLocaleTimeString("pl-PL", {
                                         hour: "2-digit",
@@ -40,30 +47,33 @@ const MovieShowtimesSection = ({ showtimes }) => {
                                     })}
                                 </span>
 
-                                {/* 2D / 3D */}
+                                <span className="text-sm mt-1">
+                                    {show.hasSubtitles ? "Napisy" : show.audioTrack}
+                                </span>
+
                                 <span className="text-sm mt-1">
                                     {show.is3d ? "3D" : "2D"}
                                 </span>
-
-                                {/* Subtitles */}
-                                {show.subtitles && (
-                                    <span className="text-sm mt-1">
-                                        Napisy
-                                    </span>
-                                )}
                             </div>
                         ))}
                     </div>
                 </div>
             ))}
 
-            {allDates.length > 4 && !showAllDays &&(
+            {allDates.length > 4 && (
                 <button
-                    onClick={() => setShowAllDays(true)}
-                    className="mt-2 px-4 py-2 bg-primary text-white rounded-xl flex items-center justify-center gap-2 transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer"
+                    onClick={() => setShowAllDays(prev => !prev)}
+                    className="mt-2 px-4 py-2 bg-primary text-white rounded-xl
+                               flex items-center justify-center gap-2
+                               transition-all duration-300 ease-out
+                               hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa]
+                               cursor-pointer"
                 >
-                    <Plus size={18} />
-                    Pokaż więcej dni
+                    <Plus
+                        size={18}
+                        className={`transition-transform ${showAllDays ? "rotate-45" : ""}`}
+                    />
+                    {showAllDays ? "Pokaż mniej" : "Pokaż więcej dni"}
                 </button>
             )}
         </div>

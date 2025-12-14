@@ -35,9 +35,9 @@ const LoginPage = () => {
 
     return (
         <div className="h-full w-full flex items-center justify-center px-4">
-            <div className="border-2 rounded-2xl w-full md:max-w-[480px] flex flex-col gap-6 px-12 py-10">
+            <div className="border-2 rounded-2xl w-full md:max-w-[480px] flex flex-col gap-6 px-12 py-8">
 
-                <h1 className="text-4xl text-center">
+                <h1 className="text-3xl text-center">
                     Zaloguj się na swoje konto <span className="text-primary">CINEO</span>
                 </h1>
 
@@ -66,7 +66,7 @@ const LoginPage = () => {
 
                 <button
                     onClick={handleLogin}
-                    className="w-full bg-primary py-5 rounded-md text-2xl transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
+                    className="w-full bg-primary py-3 rounded-md text-2xl transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
                     Zaloguj się
                 </button>
 
@@ -77,11 +77,11 @@ const LoginPage = () => {
                     </Link>
                 </div>
 
-                <Link to="/" className="flex items-center justify-center mt-10">
+                <Link to="/" className="flex items-center justify-center mt-6">
                     <img
                         src={logo}
                         alt="Logo"
-                        className="h-24 w-auto object-contain"
+                        className="h-20 w-auto object-contain"
                     />
                 </Link>
 

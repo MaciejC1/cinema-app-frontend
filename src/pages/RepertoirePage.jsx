@@ -2,6 +2,12 @@ import ContentWrapper from "../layouts/ContentWrapper";
 import Calendar from "../components/calendar/Calendar";
 import { useState, useEffect, useRef } from "react";
 import { Calendar as CalendarIcon } from "lucide-react";
+import { formatDateToISO } from "../utils/format";
+import { useMoviesWithShowtimes } from "../api/hooks/movieQueries";
+import { useCinema } from "../context/CinemaContext";
+import ErrorLoading from "../components/loading_components/ErrorLoading";
+import LoadingSpinner from "../components/loading_components/LoadingSpinner";
+import RepertoireCard from "../components/cards/RepertoireCard";
 
 const RepertoirePage = () => {
   const [weekDays, setWeekDays] = useState([]);
@@ -10,6 +16,8 @@ const RepertoirePage = () => {
   const [showCalendar, setShowCalendar] = useState(false);
   const buttonRef = useRef(null);
   const calendarRef = useRef(null);
+  const { cinema } = useCinema();
+  const cinemaId = cinema?.id;
 
   useEffect(() => {
     const days = [];
@@ -61,6 +69,10 @@ const RepertoirePage = () => {
   }, [showCalendar]);
 
   const displayedDay = customDate || weekDays[selectedDayIndex]?.fullDate;
+
+  const selectedDateISO = formatDateToISO(displayedDay);
+
+  const { data: movies, isLoading: isLoadingMovies, isError: isErrorMovies } = useMoviesWithShowtimes(selectedDateISO, cinemaId);
 
   return (
     <div className="w-full relative mt-28">
@@ -118,8 +130,37 @@ const RepertoirePage = () => {
           />
         </div>
       )}
+
+      <ContentWrapper>
+        {isLoadingMovies && (
+          <LoadingSpinner text="Ładowanie repertuaru..." />
+        )}
+
+        {isErrorMovies && (
+          <ErrorLoading message="Nie udało się pobrać repertuaru" />
+        )}
+
+        {!isLoadingMovies && !isErrorMovies && movies?.length === 0 && (
+          <p className="text-gray-400 text-center min-h-[300px]">
+            Brak seansów na wybrany dzień
+          </p>
+        )}
+
+        {!isLoadingMovies && !isErrorMovies && movies?.map((movie) => (
+          <div key={movie.id} className="mb-8">
+            <RepertoireCard
+              movieId={movie.id}
+              title={movie.title}
+              poster={movie.poster}
+              ageRating={movie.ageRating}
+              genres={movie.genres}
+              showtimes={movie.showtimes}
+            />
+          </div>
+        ))}
+      </ContentWrapper>
     </div>
-  );
+  );s
 };
 
 export default RepertoirePage;

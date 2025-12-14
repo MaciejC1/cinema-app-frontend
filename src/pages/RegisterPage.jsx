@@ -49,8 +49,8 @@ const RegisterPage = () => {
 
     return (
         <div className="h-full w-full flex items-center justify-center px-4">
-            <div className="border-2 rounded-2xl w-full md:max-w-[900px] flex flex-col gap-6 px-12 py-10">
-                <h1 className="text-4xl text-center flex flex-col">
+            <div className="border-2 rounded-2xl w-full md:max-w-[900px] flex flex-col gap-6 px-12 py-8">
+                <h1 className="text-3xl text-center flex flex-col">
                     Zaloguj się na swoje konto <span className="text-primary">CINEO</span>
                 </h1>
 
@@ -119,7 +119,6 @@ const RegisterPage = () => {
                             className="w-full bg-[#0C0C0C] border-2 border-[#505050] px-2 py-4 rounded-md focus:outline-none focus:border-primary"
                         />
 
-                        {/* ✅ WYBÓR KINA */}
                         <div className="flex flex-col mt-4">
                             <span>Wybierz kino</span>
 

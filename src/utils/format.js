@@ -4,3 +4,8 @@ export const formatDuration = (minutes) => {
     const m = minutes % 60;
     return `${h}h ${m}m`;
 };
+
+export const formatDateToISO = (date) => {
+  if (!date) return null;
+  return date.toISOString().split("T")[0];
+};

@@ -16,6 +16,11 @@ const fetchMovieBySlug = async (slug) => {
   return data;
 };
 
+const fetchMoviesForSurvey = async () => {
+  const { data } = await apiWithoutToken.get('/public/movies/survey');
+  return data;
+};
+
 const fetchMoviesWithShowtimes = async (date, cinemaId) => {
   const { data } = await apiWithoutToken.get(
     "/public/movies/showtimes",
@@ -73,6 +78,14 @@ export const useMovieBySlug = (slug) => {
     queryKey: ["movie", slug],
     queryFn: () => fetchMovieBySlug(slug),
     enabled: !!slug,
+    staleTime: 1000 * 60 * 5,
+  });
+};
+
+export const useMoviesForSurvey = () => {
+  return useQuery({
+    queryKey: ["survey-movies"],
+    queryFn: fetchMoviesForSurvey,
     staleTime: 1000 * 60 * 5,
   });
 };

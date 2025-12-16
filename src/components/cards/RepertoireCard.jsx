@@ -1,8 +1,16 @@
-const RepertoireCard = ({ movieId, title, poster, ageRating, genres, showtimes }) => {
+import { useNavigate } from "react-router-dom";
+
+const RepertoireCard = ({ movieId, title, poster, ageRating, genres, showtimes, slug }) => {
+    const navigate = useNavigate();
+
+    const goToMovie = () => {
+        navigate(`/film/${slug}`);
+    };
+
     return (
         <div className="flex flex-col lg:flex-row bg-[#0D0D0D] p-4 rounded-2xl gap-6">
 
-            <div className="rounded-lg overflow-hidden aspect-2/3 w-48 bg-[#1a1a1a] flex-shrink-0 cursor-pointer hover:scale-104 duration-300 transition-all">
+            <div onClick={goToMovie} className="rounded-lg overflow-hidden aspect-2/3 w-48 bg-[#1a1a1a] flex-shrink-0 cursor-pointer hover:scale-104 duration-300 transition-all">
                 <img
                     src={poster}
                     alt={title}
@@ -11,9 +19,9 @@ const RepertoireCard = ({ movieId, title, poster, ageRating, genres, showtimes }
             </div>
 
             <div className="flex-1 flex flex-col gap-4">
-                
+
                 <div className="flex flex-col gap-2">
-                    <h1 className="text-xl line-clamp-1 hover:underline cursor-pointer">{title}</h1>
+                    <h1 onClick={goToMovie} className="text-xl line-clamp-1 hover:underline cursor-pointer">{title}</h1>
 
                     <div className="flex flex-wrap gap-2">
                         {genres.map((genre, index) => (

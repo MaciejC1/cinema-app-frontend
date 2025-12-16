@@ -155,6 +155,7 @@ const RepertoirePage = () => {
               ageRating={movie.ageRating}
               genres={movie.genres}
               showtimes={movie.showtimes}
+              slug={movie.slug}
             />
           </div>
         ))}

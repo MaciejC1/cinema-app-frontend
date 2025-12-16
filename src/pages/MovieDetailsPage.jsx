@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Clock, Popcorn, Play, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { TiStarFullOutline } from "react-icons/ti";
 import ContentWrapper from "../layouts/ContentWrapper";
@@ -6,6 +6,8 @@ import { useMovieBySlug } from "../api/hooks/movieQueries";
 import { useParams } from "react-router-dom";
 import { formatDuration } from "../utils/format";
 import { useCinema } from "../context/CinemaContext";
+import { useAuth } from "../context/AuthContext";
+import { useUserMatchToMovie, useUserPreferenceStatus } from "../api/hooks/userQueries";
 import { useMovieShowtimes } from "../api/hooks/movieQueries";
 import MovieShowtimesSection from "../components/sections/MovieShowtimesSection";
 
@@ -21,9 +23,24 @@ import ErrorLoading from "../components/loading_components/ErrorLoading";
 const MovieDetailsPage = () => {
     const [isTrailerOpen, setIsTrailerOpen] = useState(false);
     const { cinema } = useCinema();
+    const { user, isAuthenticated } = useAuth();
     const { slug } = useParams();
     const { data: movie, isLoading, isError } = useMovieBySlug(slug);
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+
+    const {
+        data: preferenceStatus,
+        isLoading: preferenceLoading
+    } = useUserPreferenceStatus(isAuthenticated);
+
+    const {
+        data: userMatch,
+        isLoading: matchLoading
+    } = useUserMatchToMovie(
+        user?.userId,
+        movie?.id,
+        isAuthenticated && preferenceStatus?.hasPreferences
+    );
 
     const {
         data: showtimes,
@@ -31,7 +48,7 @@ const MovieDetailsPage = () => {
         isError: showtimesError
     } = useMovieShowtimes(slug, cinema?.id);
 
-    if (isLoading || showtimesLoading || !cinema ) {
+    if (isLoading || showtimesLoading || !cinema) {
         return (
             <LoadingSpinner
                 text="Ładowanie szczegółów filmu..."
@@ -150,6 +167,25 @@ const MovieDetailsPage = () => {
                                         <span>Kup bilet</span>
                                         <Popcorn size={24} />
                                     </button>
+
+                                    {/* Informacje o dopasowaniu użytkownika */}
+                                    {isAuthenticated && !preferenceLoading && (
+                                        <div className="rounded-xl text-primary">
+                                            {preferenceStatus?.hasPreferences ? (
+                                                userMatch ? (
+                                                    <span>
+                                                        Ten film jest zgodny z Twoimi upodobaniami w {userMatch.similarityNormalizedPercentage}
+                                                    </span>
+                                                ) : (
+                                                    <span>Ładowanie dopasowania...</span>
+                                                )
+                                            ) : (
+                                                <span>
+                                                    Aby otrzymać rekomendacje, wypełnij ankietę preferencji.
+                                                </span>
+                                            )}
+                                        </div>
+                                    )}
                                 </div>
 
                                 {/* Prawa kolumna - trailer thumbnail */}

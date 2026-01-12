@@ -17,13 +17,13 @@ const AppRouter = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/film/:slug" element={<MovieDetailsPage />} />
           <Route path="/repertuar" element={<RepertoirePage />} />
+          <Route path="/rekomendacje" element={<RecommendationPage />} />
         </Route>
 
         <Route element={<EmptyLayout />}>
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
-          <Route path="/survey" element={<SurveyPage />}/>
-          <Route path="/rekomendacje" element={<RecommendationPage />}/>
+          <Route path="/survey" element={<SurveyPage />} />
         </Route>
 
       </Routes>

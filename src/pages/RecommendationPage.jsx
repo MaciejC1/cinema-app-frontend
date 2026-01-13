@@ -10,6 +10,13 @@ import {
     PolarAngleAxis,
     PolarRadiusAxis,
     ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend
 } from "recharts";
 import { useState, useMemo, useEffect } from "react";
 
@@ -101,6 +108,27 @@ const RecommendationPage = () => {
             })
             .filter(Boolean);
     }, [aiRecommendations, activeMovies]);
+
+    const comparisonChartData = useMemo(() => {
+        return recommendedMovies.map(movie => {
+            const contentBasedValue = parseFloat(movie.system1.similarityNormalizedPercentage);
+            const collaborativeValue = typeof movie.system2.similarityNormalizedPercentage === 'string' && 
+                                       movie.system2.similarityNormalizedPercentage !== '-'
+                ? parseFloat(movie.system2.similarityNormalizedPercentage)
+                : 0;
+
+            const shortTitle = movie.title.length > 20 
+                ? movie.title.substring(0, 20) + '...' 
+                : movie.title;
+
+            return {
+                title: shortTitle,
+                fullTitle: movie.title,
+                contentBased: contentBasedValue,
+                collaborative: collaborativeValue
+            };
+        });
+    }, [recommendedMovies]);
 
     const handlePrevious = () => {
         setCurrentIndex((prev) =>
@@ -270,11 +298,101 @@ const RecommendationPage = () => {
                 </div>
             </div>
 
-            {/* AI Recommendations Dialog */}
+            <div className="mt-10 bg-black border-2 border-primary rounded-2xl p-6 shadow-lg shadow-primary/20">
+                <h2 className="text-2xl mb-6 text-center">Porównanie systemów rekomendacji - wszystkie filmy</h2>
+                <p className="text-center mb-6">
+                    Dopasowanie znormalizowane dla wszystkich filmów z repertuaru
+                </p>
+                
+                <div className="w-full h-[500px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart 
+                            data={comparisonChartData}
+                            margin={{ top: 20, right: 30, left: 20, bottom: 100 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                            <XAxis 
+                                dataKey="title" 
+                                stroke="#999"
+                                angle={-45}
+                                textAnchor="end"
+                                height={100}
+                                tick={{ fill: '#999', fontSize: 12 }}
+                                interval={0}
+                            />
+                            <YAxis 
+                                stroke="#999"
+                                tick={{ fill: '#999' }}
+                                label={{ value: 'Dopasowanie (%)', angle: -90, position: 'insideLeft', fill: '#999' }}
+                                domain={[0, 100]}
+                            />
+                            <Tooltip 
+                                contentStyle={{ 
+                                    backgroundColor: '#1a1a1a', 
+                                    border: '1px solid #DF2144',
+                                    borderRadius: '8px'
+                                }}
+                                labelStyle={{ color: '#fff', marginBottom: '8px' }}
+                                itemStyle={{ color: '#fff' }}
+                                formatter={(value, name) => {
+                                    const label = name === 'contentBased' ? 'Content-Based' : 'Collaborative Filtering';
+                                    return [`${value}%`, label];
+                                }}
+                                labelFormatter={(label, payload) => {
+                                    if (payload && payload[0]) {
+                                        return payload[0].payload.fullTitle;
+                                    }
+                                    return label;
+                                }}
+                            />
+                            <Legend 
+                                wrapperStyle={{ paddingTop: '20px' }}
+                                formatter={(value) => {
+                                    return value === 'contentBased' ? 'Content-Based' : 'Collaborative Filtering';
+                                }}
+                            />
+                            <Bar 
+                                dataKey="contentBased" 
+                                fill="#DF2144"
+                                radius={[8, 8, 0, 0]}
+                                name="contentBased"
+                            />
+                            <Bar 
+                                dataKey="collaborative" 
+                                fill="#8B1538"
+                                radius={[8, 8, 0, 0]}
+                                name="collaborative"
+                            />
+                        </BarChart>
+                    </ResponsiveContainer>
+                </div>
+
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="bg-primary/10 rounded-lg p-4 border border-primary/30">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-4 h-4 rounded" style={{ backgroundColor: '#DF2144' }}></div>
+                            <h4 className="font-semibold">Content-Based</h4>
+                        </div>
+                        <p className="text-sm ">
+                            Rekomendacje oparte na analizie treści filmu
+                        </p>
+                    </div>
+                    <div className="bg-primary/10 rounded-lg p-4 border border-primary/30">
+                        <div className="flex items-center gap-3 mb-2">
+                            <div className="w-4 h-4 rounded" style={{ backgroundColor: '#8B1538' }}></div>
+                            <h4 className="font-semibold">Collaborative Filtering</h4>
+                        </div>
+                        <p className="text-sm ">
+                            Rekomendacje oparte na preferencjach podobnych użytkowników
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             {showAIDialog && (
                 <div className="fixed inset-0 bg-black/95 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                     <div className="bg-gradient-to-br from-black via-black to-primary/5 border-2 border-primary rounded-3xl w-full max-w-7xl max-h-[95vh] flex flex-col shadow-2xl shadow-primary/40 overflow-hidden">
-                        {/* Header */}
+               
                         <div className="relative bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-b border-primary/30 p-6 flex items-center justify-between flex-shrink-0">
                             <div className="flex items-center gap-4">
                                 <div>
@@ -291,7 +409,6 @@ const RecommendationPage = () => {
                             </button>
                         </div>
 
-                        {/* Content */}
                         <div className="p-8 flex-1 overflow-y-auto custom-scrollbar">
                             {aiLoading ? (
                                 <div className="flex flex-col items-center justify-center h-full gap-4">
@@ -310,7 +427,7 @@ const RecommendationPage = () => {
                             ) : (
                                 <div className="h-full flex flex-col">
                                     <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-8">
-                                        {/* Movie Poster */}
+ 
                                         <div className="relative group">
                                             <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity z-10 cursor-pointer"></div>
                                             <div className="rounded-2xl overflow-hidden h-[580px] border-2 border-primary/20">
@@ -325,7 +442,6 @@ const RecommendationPage = () => {
                                             </div>
                                         </div>
 
-                                        {/* Movie Details */}
                                         <div className="h-[580px] flex flex-col">
                                             <div className="flex-1 overflow-y-auto custom-scrollbar pr-2">
                                                 <h3 className="text-4xl font-semibold mb-2 text-white">
@@ -335,7 +451,6 @@ const RecommendationPage = () => {
                                                     Reżyseria: {currentAIMovie.director}
                                                 </p>
 
-                                                {/* Genres */}
                                                 <div className="flex flex-wrap gap-2 mb-6">
                                                     {currentAIMovie.genres.map((genre, idx) => (
                                                         <span
@@ -347,7 +462,6 @@ const RecommendationPage = () => {
                                                     ))}
                                                 </div>
 
-                                                {/* Movie Info */}
                                                 <div className="flex gap-6 mb-6 text-sm">
                                                     <div className="flex items-center gap-2 text-gray-400">
                                                         <Clock size={16} className="text-primary" />
@@ -360,7 +474,6 @@ const RecommendationPage = () => {
                                                     )}
                                                 </div>
 
-                                                {/* Description */}
                                                 <div className="bg-gradient-to-br from-primary/5 to-transparent border border-primary/20 rounded-xl p-4 mb-6">
                                                     <p className="text-base leading-relaxed">
                                                         {currentAIMovie.description}
@@ -368,7 +481,6 @@ const RecommendationPage = () => {
                                                 </div>
                                             </div>
 
-                                            {/* AI Analysis */}
                                             <div className="flex-shrink-0 pt-6 border-t border-primary/20">
                                                 <div className="flex items-center gap-2 mb-4">
                                                     <h4 className="text-xl font-semibold text-primary">Analiza AI</h4>

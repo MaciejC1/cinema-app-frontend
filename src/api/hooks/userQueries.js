@@ -1,11 +1,22 @@
 import { apiWithoutToken, apiWithToken } from "../axiosInstance";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 export const fetchUserPreferenceStatus = async () => {
   const { data } = await apiWithToken.get(
     "/user/preferences/status"
   );
   return data;
+};
+
+const fetchAIRecommendation = async () => {
+  const { data } = await apiWithToken.get("/public/ai/recommendation");
+  return data;
+};
+
+export const useAIRecommendationMutation = () => {
+  return useMutation({
+    mutationFn: fetchAIRecommendation,
+  });
 };
 
 const fetchUserPreferenceGenres = async () => {
@@ -18,6 +29,18 @@ const fetchUserPreferenceGenres = async () => {
  const fetchUserMatchToMovies = async (userId) => {
   const { data } = await apiWithoutToken.get(
     "/public/recommendation/content-based/all",
+    {
+      params: {
+        userId,
+      },
+    }
+  );
+  return data;
+};
+
+ const fetchUserMatchToMoviesCF = async (userId) => {
+  const { data } = await apiWithoutToken.get(
+    "/public/recommendation/collaborative-filtering/all",
     {
       params: {
         userId,
@@ -50,6 +73,7 @@ export const useUserPreferenceStatus = (enabled = false) => {
   });
 };
 
+
 export const useUserPreferenceGenres = (enabled = false) => {
   return useQuery({
     queryKey: ["user-preference-genres"],
@@ -80,3 +104,12 @@ export const useUserMatchToMovies = (userId) => {
   });
 };
 
+export const useUserMatchToMoviesCF = (userId) => {
+  return useQuery({
+    queryKey: ["user-movies-match-cf", userId],
+    queryFn: () => fetchUserMatchToMoviesCF(userId),
+    enabled: !!userId,
+    retry: false,
+    staleTime: 1000 * 60 * 2,
+  });
+};

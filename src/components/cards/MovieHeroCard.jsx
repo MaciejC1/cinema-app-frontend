@@ -3,8 +3,10 @@ import { Clock, ArrowRight, Popcorn } from "lucide-react";
 import { TiStarFullOutline } from "react-icons/ti";
 import { Link } from "react-router-dom";
 import { formatDuration } from "../../utils/format";
+import { useNavigate } from "react-router-dom";
 
 const MovieHeroCard = ({ title, description, image, director, duration, rating, geners, ageRating, slug, isActive }) => {
+    const navigate = useNavigate();
     return (
         <div className="relative w-full h-full">
 
@@ -69,16 +71,17 @@ const MovieHeroCard = ({ title, description, image, director, duration, rating, 
                 </div>
 
                 <button
+                    onClick={() => navigate(`/film/${slug}#seanse`)}
                     className="mt-4 flex items-center justify-center gap-2
                             w-full sm:w-3/4 md:w-1/2 lg:w-1/3 px-4 py-3 text-xl rounded-3xl text-white
                             bg-linear-to-r from-[#791225] via-[#AC1934] to-primary
                             transition-all duration-300 ease-out hover:brightness-125 hover:shadow-[0_0_20px_#DF2144aa] cursor-pointer">
                     <span>Kup bilet</span>
                     <Popcorn size={24} />
-                </button> 
+                </button>
             </motion.div>
         </div>
-    
+
     );
 };
 

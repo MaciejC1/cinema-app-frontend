@@ -3,14 +3,13 @@ import { Clock, Popcorn, Play, X, ChevronLeft, ChevronRight } from "lucide-react
 import { TiStarFullOutline } from "react-icons/ti";
 import ContentWrapper from "../layouts/ContentWrapper";
 import { useMovieBySlug } from "../api/hooks/movieQueries";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { formatDuration } from "../utils/format";
 import { useCinema } from "../context/CinemaContext";
 import { useAuth } from "../context/AuthContext";
 import { useUserMatchToMovie, useUserPreferenceStatus } from "../api/hooks/userQueries";
 import { useMovieShowtimes } from "../api/hooks/movieQueries";
 import MovieShowtimesSection from "../components/sections/MovieShowtimesSection";
-
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
 import "swiper/css";
@@ -27,6 +26,20 @@ const MovieDetailsPage = () => {
     const { slug } = useParams();
     const { data: movie, isLoading, isError } = useMovieBySlug(slug);
     const [selectedImageIndex, setSelectedImageIndex] = useState(null);
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        if (location.hash === "#seanse") {
+            setTimeout(() => {
+                const el = document.getElementById("seanse");
+                if (el) {
+                    el.scrollIntoView({ behavior: "smooth", block: "start" });
+                }
+            }, 100);
+        }
+    }, [location.hash]);
+
 
     const {
         data: preferenceStatus,
@@ -79,6 +92,7 @@ const MovieDetailsPage = () => {
             prev === galleryImages.length - 1 ? 0 : prev + 1
         );
     };
+
 
     return (
         <div className="w-full relative">
@@ -156,6 +170,7 @@ const MovieDetailsPage = () => {
                                     </div>
 
                                     <button
+                                        onClick={() => navigate(`/film/${slug}#seanse`)}
                                         className="mt-4 flex items-center justify-center gap-2
                                 w-1/2 px-4 py-3 text-xl rounded-3xl text-white
                                 bg-gradient-to-r from-[#791225] via-[#AC1934] to-primary
@@ -339,7 +354,7 @@ const MovieDetailsPage = () => {
             </ContentWrapper>
 
             <ContentWrapper>
-                <div className="mt-8">
+                <div className="mt-8" id="seanse" >
                     <span className="text-[clamp(1.5rem,4vw,3rem)] flex gap-x-2">
                         Seanse dostępne w kinie:
                         <span className="text-primary">{cinema?.name}</span>

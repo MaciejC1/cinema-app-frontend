@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Plus } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const MovieShowtimesSection = ({ showtimes }) => {
     const [showAllDays, setShowAllDays] = useState(false);
+    const navigate = useNavigate();
 
     const sortedShowtimes = [...showtimes].sort(
         (a, b) => new Date(a.startTime) - new Date(b.startTime)
@@ -34,6 +36,13 @@ const MovieShowtimesSection = ({ showtimes }) => {
                         {showtimesByDate[date].map((show) => (
                             <div
                                 key={show.id}
+                                onClick={() =>
+                                    navigate(`/rezerwacja/${show.id}`, {
+                                        state: {
+                                            showtime: show
+                                        }
+                                    })
+                                }
                                 className="bg-[#111111] border-2 border-primary
                                            text-white w-40 py-4 flex flex-col
                                            items-center justify-center rounded-lg

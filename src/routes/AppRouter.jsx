@@ -8,6 +8,9 @@ import RegisterPage from "../pages/RegisterPage"
 import RepertoirePage from "../pages/RepertoirePage"
 import SurveyPage from "../pages/SurveyPage"
 import RecommendationPage from "../pages/RecommendationPage"
+import TicketPage from "../pages/TicketPage"
+import PaymentPage from "../pages/PaymentPage"
+
 const AppRouter = () => {
   return (
     <BrowserRouter>
@@ -24,6 +27,8 @@ const AppRouter = () => {
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
           <Route path="/survey" element={<SurveyPage />} />
+          <Route path="/rezerwacja/:showtimeId" element={<TicketPage />} />
+          <Route path="/payment" element={<PaymentPage />} />
         </Route>
 
       </Routes>

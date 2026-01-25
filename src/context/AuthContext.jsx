@@ -52,14 +52,12 @@ export const AuthProvider = ({ children }) => {
       const stored = sessionStorage.getItem("user");
 
       if (stored) {
-        // 1. jeśli dane są w sessionStorage → ustawiamy
         const parsed = JSON.parse(stored);
         setUser(parsed);
         setIsAuthenticated(true);
       } else {
-        // 2. jeśli nie ma → sprawdzamy backendem (bo może cookie nadal ważne)
         try {
-          const res = await api.get("/user/auth/me"); // backend zwróci usera z cookie
+          const res = await api.get("/user/auth/me");
           sessionStorage.setItem("user", JSON.stringify(res.data));
           setUser(res.data);
           setIsAuthenticated(true);

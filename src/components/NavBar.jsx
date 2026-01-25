@@ -27,7 +27,6 @@ const NavBar = () => {
             flex items-center justify-between
           "
         >
-          {/* LEWA SEKCJA */}
           <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/" className="flex">
               <img
@@ -37,7 +36,6 @@ const NavBar = () => {
               />
             </Link>
 
-            {/* WYBÓR KINA – desktop */}
             <button
               onClick={() => setOpenModal(true)}
               className="
@@ -53,7 +51,6 @@ const NavBar = () => {
             </button>
           </div>
 
-          {/* ŚRODEK – desktop menu */}
           <div className="hidden lg:flex gap-6 justify-center grow">
             <Link to="/movies" className="text-2xl hover:text-primary">
               Kina
@@ -69,7 +66,6 @@ const NavBar = () => {
             </Link>
           </div>
 
-          {/* PRAWA SEKCJA */}
           <div className="flex gap-3 items-center">
             <Link to="/search" className="hover:text-gray-300">
               <Search className="w-6 sm:w-7 h-auto" />
@@ -87,7 +83,6 @@ const NavBar = () => {
               </Link>
             )}
 
-            {/* HAMBURGER – mobile */}
             <button
               onClick={() => setMobileMenuOpen((prev) => !prev)}
               className="lg:hidden"
@@ -102,7 +97,6 @@ const NavBar = () => {
         </div>
       </nav>
 
-      {/* MOBILE MENU */}
       {mobileMenuOpen && (
         <div
           className="
@@ -141,7 +135,6 @@ const NavBar = () => {
         </div>
       )}
 
-      {/* MODAL */}
       {openModal && <CinemaSelectModal onClose={() => setOpenModal(false)} />}
     </>
   );

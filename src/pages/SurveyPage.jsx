@@ -7,6 +7,7 @@ import ErrorLoading from "../components/loading_components/ErrorLoading";
 import { useMoviesForSurvey } from "../api/hooks/movieQueries";
 import { useMutation } from "@tanstack/react-query";
 import { apiWithToken } from "../api/axiosInstance";
+import { useNavigate } from "react-router-dom";
 
 import toast from "react-hot-toast";
 const REQUIRED_RATINGS = 8;
@@ -15,6 +16,7 @@ const REQUIRED_GENRES = 3;
 const SurveyPage = () => {
   const [selectedGenres, setSelectedGenres] = useState([]);
   const [ratings, setRatings] = useState({});
+  const navigate = useNavigate();
 
   const { data: genres, isLoading: isGenresLoading, isError: isGenresError } = useGenres();
   const { data: movies, isLoading: isMoviesLoading, isError: isMoviesError } = useMoviesForSurvey();
@@ -31,6 +33,7 @@ const SurveyPage = () => {
           color: "#fff",
         },
       });
+      navigate("/");
     },
     onError: (err) => {
       console.error(err);

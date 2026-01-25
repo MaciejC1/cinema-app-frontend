@@ -1,12 +1,17 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
-import { Listbox, ListboxOptions, ListboxButton } from "@headlessui/react";
+import {
+    Listbox,
+    ListboxOptions,
+    ListboxButton,
+} from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import TextInput from "../components/inputs/TextInput";
 import { useRegister } from "../api/hooks/authQueries";
 import { useAuth } from "../context/AuthContext";
 import { useCinemas } from "../api/hooks/cinemaQueries";
+import toast from "react-hot-toast";
 
 const RegisterPage = () => {
     const [name, setName] = useState("");
@@ -15,13 +20,17 @@ const RegisterPage = () => {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [phone, setPhone] = useState("");
+    const [birthDay, setBirthDay] = useState("");
+    const [birthMonth, setBirthMonth] = useState("");
+    const [birthYear, setBirthYear] = useState("");
 
-    const { data: cinemas = [], isLoading } = useCinemas();
+    const { data: cinemas = [] } = useCinemas();
     const { login } = useAuth();
-
     const [selectedCinema, setSelectedCinema] = useState(null);
 
     const registerMutation = useRegister();
+    const navigate = useNavigate();
+
     useEffect(() => {
         if (cinemas.length > 0 && !selectedCinema) {
             setSelectedCinema(cinemas[0]);
@@ -29,33 +38,76 @@ const RegisterPage = () => {
     }, [cinemas, selectedCinema]);
 
     const handleRegister = () => {
-        registerMutation.mutate(
-            { email, password },
-            {
-                onSuccess: async () => {
-                    try {
-                        await login(email, password);
-                    } catch (err) {
-                        console.error("Błąd logowania po rejestracji:", err);
-                    }
-                },
-                onError: (error) => {
-                    alert("Błąd rejestracji");
-                    console.error(error);
-                },
-            }
-        );
+        if (password !== confirmPassword) {
+            toast.error("Hasła nie są takie same");
+            return;
+        }
+
+        if (
+            birthDay &&
+            birthMonth &&
+            birthYear &&
+            (birthDay > 31 || birthMonth > 12 || birthYear.length !== 4)
+        ) {
+            toast.error("Nieprawidłowa data urodzenia");
+            return;
+        }
+
+        const payload = {
+            email: email,
+            firstName: name,
+            lastName: surname,
+            phone: phone || null,
+            dateOfBirth:
+                birthDay && birthMonth && birthYear
+                    ? `${birthYear}-${birthMonth.padStart(
+                        2,
+                        "0"
+                    )}-${birthDay.padStart(2, "0")}`
+                    : null,
+            preferredCinemaId: selectedCinema?.id || null,
+            passwordHash: password,
+        };
+
+        registerMutation.mutate(payload, {
+            onSuccess: async () => {
+                try {
+                    await login(email, password);
+                } catch (err) {
+                    console.error(
+                        "Błąd logowania po rejestracji:",
+                        err
+                    );
+                }
+                toast.success("Zarejestrowano pomyślnie!", {
+                    style: {
+                        background: "#111111",
+                        color: "#fff",
+                    },
+                });
+                navigate("/");
+            },
+            onError: (error) => {
+                toast.error("Błąd rejestracji", {
+                    style: {
+                        background: "#111111",
+                        color: "#fff",
+                    },
+                });
+                console.error(error);
+            },
+        });
     };
 
     return (
         <div className="h-full w-full flex items-center justify-center px-4">
             <div className="border-2 rounded-2xl w-full md:max-w-[900px] flex flex-col gap-6 px-12 py-8">
                 <h1 className="text-3xl text-center flex flex-col">
-                    Zaloguj się na swoje konto <span className="text-primary">CINEO</span>
+                    Zarejestruj konto{" "}
+                    <span className="text-primary">CINEO</span>
                 </h1>
 
                 <div className="flex gap-12">
-                    {/* LEWA KOLUMNA */}
                     <div className="w-full flex flex-col gap-y-2">
                         <TextInput
                             label="Imię"
@@ -88,13 +140,14 @@ const RegisterPage = () => {
                             type="password"
                             placeholder="********"
                             value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            onChange={(e) =>
+                                setConfirmPassword(e.target.value)
+                            }
                         />
                     </div>
 
                     <div className="w-1 bg-primary" />
 
-                    {/* PRAWA KOLUMNA */}
                     <div className="w-full flex flex-col">
                         <span>Telefon (opcjonalnie)</span>
                         <input
@@ -102,9 +155,16 @@ const RegisterPage = () => {
                             placeholder="123 456 789"
                             value={phone}
                             onChange={(e) => {
-                                let digits = e.target.value.replace(/\D/g, "");
-                                if (digits.length > 3 && digits.length <= 6) {
-                                    digits = digits.slice(0, 3) + " " + digits.slice(3);
+                                let digits =
+                                    e.target.value.replace(/\D/g, "");
+                                if (
+                                    digits.length > 3 &&
+                                    digits.length <= 6
+                                ) {
+                                    digits =
+                                        digits.slice(0, 3) +
+                                        " " +
+                                        digits.slice(3);
                                 } else if (digits.length > 6) {
                                     digits =
                                         digits.slice(0, 3) +
@@ -120,9 +180,64 @@ const RegisterPage = () => {
                         />
 
                         <div className="flex flex-col mt-4">
-                            <span>Wybierz kino</span>
+                            <span>Data urodzenia</span>
+                            <div className="flex gap-2">
+                                <input
+                                    type="text"
+                                    placeholder="DD"
+                                    maxLength={2}
+                                    value={birthDay}
+                                    onChange={(e) =>
+                                        setBirthDay(
+                                            e.target.value.replace(
+                                                /\D/g,
+                                                ""
+                                            )
+                                        )
+                                    }
+                                    className="w-full bg-[#0C0C0C] border-2 border-[#505050] px-2 py-4 rounded-md text-center focus:outline-none focus:border-primary"
+                                />
 
-                            <Listbox value={selectedCinema} onChange={setSelectedCinema}>
+                                <input
+                                    type="text"
+                                    placeholder="MM"
+                                    maxLength={2}
+                                    value={birthMonth}
+                                    onChange={(e) =>
+                                        setBirthMonth(
+                                            e.target.value.replace(
+                                                /\D/g,
+                                                ""
+                                            )
+                                        )
+                                    }
+                                    className="w-full bg-[#0C0C0C] border-2 border-[#505050] px-2 py-4 rounded-md text-center focus:outline-none focus:border-primary"
+                                />
+
+                                <input
+                                    type="text"
+                                    placeholder="YYYY"
+                                    maxLength={4}
+                                    value={birthYear}
+                                    onChange={(e) =>
+                                        setBirthYear(
+                                            e.target.value.replace(
+                                                /\D/g,
+                                                ""
+                                            )
+                                        )
+                                    }
+                                    className="w-full bg-[#0C0C0C] border-2 border-[#505050] px-2 py-4 rounded-md text-center focus:outline-none focus:border-primary"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex flex-col mt-4">
+                            <span>Wybierz kino</span>
+                            <Listbox
+                                value={selectedCinema}
+                                onChange={setSelectedCinema}
+                            >
                                 <div className="relative">
                                     <ListboxButton className="w-full bg-[#0C0C0C] border-2 border-[#505050] px-4 py-4 rounded-md flex justify-between items-center">
                                         {selectedCinema
@@ -159,15 +274,25 @@ const RegisterPage = () => {
                             Zarejestruj się
                         </button>
 
-                        <Link to="/" className="flex justify-center mt-7">
-                            <img src={logo} alt="Logo" className="h-20" />
+                        <Link
+                            to="/"
+                            className="flex justify-center mt-7"
+                        >
+                            <img
+                                src={logo}
+                                alt="Logo"
+                                className="h-20"
+                            />
                         </Link>
                     </div>
                 </div>
 
                 <h1 className="text-xl text-center">
                     Masz już konto?{" "}
-                    <Link to="/login" className="text-primary hover:underline">
+                    <Link
+                        to="/login"
+                        className="text-primary hover:underline"
+                    >
                         Zaloguj się
                     </Link>
                 </h1>

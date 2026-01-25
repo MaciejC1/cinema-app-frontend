@@ -356,12 +356,14 @@ const RecommendationPage = () => {
                                 fill="#DF2144"
                                 radius={[8, 8, 0, 0]}
                                 name="contentBased"
+                                isAnimationActive={false}  
                             />
                             <Bar 
                                 dataKey="collaborative" 
                                 fill="#8B1538"
                                 radius={[8, 8, 0, 0]}
                                 name="collaborative"
+                                isAnimationActive={false}  
                             />
                         </BarChart>
                     </ResponsiveContainer>

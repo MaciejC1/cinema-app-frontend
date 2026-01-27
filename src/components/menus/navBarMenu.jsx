@@ -63,7 +63,7 @@ const NavBarMenu = () => {
         <div className="absolute right-0 mt-2 w-48 bg-black border-2 border-t-0 border-primary rounded-lg rounded-t-xs shadow-lg py-2 flex flex-col">
 
           <Link
-            to="/profile"
+            to="/profil"
             className="px-4 py-2 hover:bg-[#202020] flex items-center gap-2"
           >
             <User className="w-5 h-5 text-primary" />

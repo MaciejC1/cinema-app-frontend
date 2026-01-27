@@ -10,6 +10,7 @@ import SurveyPage from "../pages/SurveyPage"
 import RecommendationPage from "../pages/RecommendationPage"
 import TicketPage from "../pages/TicketPage"
 import PaymentPage from "../pages/PaymentPage"
+import ProfilePage from "../pages/ProfilePage"
 
 const AppRouter = () => {
   return (
@@ -21,6 +22,7 @@ const AppRouter = () => {
           <Route path="/film/:slug" element={<MovieDetailsPage />} />
           <Route path="/repertuar" element={<RepertoirePage />} />
           <Route path="/rekomendacje" element={<RecommendationPage />} />
+          <Route path="/profil" element={<ProfilePage />} />
         </Route>
 
         <Route element={<EmptyLayout />}>

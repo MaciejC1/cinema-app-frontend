@@ -8,6 +8,13 @@ export const fetchUserPreferenceStatus = async () => {
   return data;
 };
 
+export const fetchUserData = async () => {
+  const { data } = await apiWithToken.get(
+    "/user/auth/me"
+  );
+  return data;
+};
+
 const fetchAIRecommendation = async () => {
   const { data } = await apiWithToken.get("/public/ai/recommendation");
   return data;
@@ -26,7 +33,14 @@ const fetchUserPreferenceGenres = async () => {
   return data;
 };
 
- const fetchUserMatchToMovies = async (userId) => {
+const fetchUserRatings = async () => {
+  const { data } = await apiWithToken.get(
+    "/user/movies/rating"
+  );
+  return data;
+};
+
+const fetchUserMatchToMovies = async (userId) => {
   const { data } = await apiWithoutToken.get(
     "/public/recommendation/content-based/all",
     {
@@ -38,7 +52,7 @@ const fetchUserPreferenceGenres = async () => {
   return data;
 };
 
- const fetchUserMatchToMoviesCF = async (userId) => {
+const fetchUserMatchToMoviesCF = async (userId) => {
   const { data } = await apiWithoutToken.get(
     "/public/recommendation/collaborative-filtering/all",
     {
@@ -50,7 +64,37 @@ const fetchUserPreferenceGenres = async () => {
   return data;
 };
 
-export const fetchUserMatchToMovie = async (userId,movieId) => {
+const fetchUserBookingHistory = async ({
+  status,
+  from,
+  to,
+  minAmount,
+  maxAmount,
+  page = 0,
+  size = 10,
+  sort = "createdAt,desc",
+}) => {
+  const { data } = await apiWithToken.get(
+    "/user/booking/history",
+    {
+      params: {
+        status,
+        from,
+        to,
+        minAmount,
+        maxAmount,
+        page,
+        size,
+        sort,
+      },
+    }
+  );
+
+  return data;
+};
+
+
+export const fetchUserMatchToMovie = async (userId, movieId) => {
   const { data } = await apiWithoutToken.get(
     "/public/recommendation/match",
     {
@@ -63,6 +107,18 @@ export const fetchUserMatchToMovie = async (userId,movieId) => {
   return data;
 };
 
+export const useUserBookingHistory = (filters = {}, enabled = true) => {
+  return useQuery({
+    queryKey: ["user-booking-history", filters],
+    queryFn: () => fetchUserBookingHistory(filters),
+    enabled,
+    keepPreviousData: true,
+    staleTime: 1000 * 60 * 2,
+    retry: false,
+  });
+};
+
+
 export const useUserPreferenceStatus = (enabled = false) => {
   return useQuery({
     queryKey: ["user-preference-status"],
@@ -73,12 +129,29 @@ export const useUserPreferenceStatus = (enabled = false) => {
   });
 };
 
+export const useUserData = () => {
+  return useQuery({
+    queryKey: ["user-data"],
+    queryFn: fetchUserData,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+};
 
 export const useUserPreferenceGenres = (enabled = false) => {
   return useQuery({
     queryKey: ["user-preference-genres"],
     queryFn: fetchUserPreferenceGenres,
     enabled,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+};
+
+export const useUserRatings = () => {
+  return useQuery({
+    queryKey: ["user-ratings"],
+    queryFn: fetchUserRatings,
     staleTime: 1000 * 60 * 5,
     retry: false,
   });

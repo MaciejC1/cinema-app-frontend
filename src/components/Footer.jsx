@@ -25,9 +25,9 @@ const Footer = () => {
           <span className="text-lg font-semibold mb-3 text-primary">Informacje</span>
           <ul className="space-y-2 text-gray-400 text-sm">
             <li><a href="/" className="hover:text-primary transition-colors">Strona główna</a></li>
-            <li><a href="/movies" className="hover:text-primary transition-colors">Repertuar</a></li>
-            <li><a href="/upcoming" className="hover:text-primary transition-colors">Nadchodzące premiery</a></li>
-            <li><a href="/contact" className="hover:text-primary transition-colors">Kontakt</a></li>
+            <li><a href="/repertuar" className="hover:text-primary transition-colors">Repertuar</a></li>
+            <li><a href="/" className="hover:text-primary transition-colors">Nadchodzące premiery</a></li>
+            <li><a href="/" className="hover:text-primary transition-colors">Kontakt</a></li>
           </ul>
         </div>
 

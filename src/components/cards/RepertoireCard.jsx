@@ -45,6 +45,13 @@ const RepertoireCard = ({ movieId, title, poster, ageRating, genres, showtimes, 
                     <div className="flex flex-wrap lg:flex-col lg:items-start gap-2 mt-4">
                         {showtimes.map((show) => (
                             <div
+                                onClick={() =>
+                                    navigate(`/rezerwacja/${show.id}`, {
+                                        state: {
+                                            showtime: show
+                                        }
+                                    })
+                                }
                                 key={show.id}
                                 className="
                                     bg-[#111111] border-2 border-primary

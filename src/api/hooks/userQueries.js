@@ -16,7 +16,7 @@ export const fetchUserData = async () => {
 };
 
 const fetchAIRecommendation = async () => {
-  const { data } = await apiWithToken.get("/public/ai/recommendation");
+  const { data } = await apiWithToken.get("/user/ai/recommendation");
   return data;
 };
 

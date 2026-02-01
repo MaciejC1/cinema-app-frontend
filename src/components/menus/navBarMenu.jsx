@@ -71,7 +71,7 @@ const NavBarMenu = () => {
           </Link>
 
           <Link
-            to="/my-tickets"
+            to="/bilety"
             className="px-4 py-2 hover:bg-[#202020] flex items-center gap-2"
           >
             <Ticket className="w-5 h-5 text-primary" />

@@ -1,13 +1,35 @@
 import { useLocation, Navigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useUserData } from "../api/hooks/userQueries";
+import { useAuth } from "../context/AuthContext";
+import { usePayment } from "../api/hooks/paymentQueries";
+
 import Stepper from "../components/loading_components/Stepper";
 
 const PaymentPage = () => {
     const { state } = useLocation();
+    const { isAuthenticated } = useAuth();
+    const { mutateAsync, isPending, error } = usePayment();
 
     if (!state) {
         return <Navigate to="/" replace />;
     }
+
+    const { data: userData } = useUserData({
+        enabled: isAuthenticated,
+    });
+
+    useEffect(() => {
+        if (userData) {
+            setFormData(prev => ({
+                ...prev,
+                firstName: userData.name || "",
+                lastName: userData.lastName || "",
+                email: userData.email || "",
+                phone: userData.phone || "",
+            }));
+        }
+    }, [userData]);
 
     const { movie, showtime, seats } = state;
 
@@ -39,24 +61,31 @@ const PaymentPage = () => {
         return Object.keys(newErrors).length === 0;
     };
 
-    const handlePayment = () => {
+    const handlePayment = async () => {
         if (!validateForm()) return;
 
-        setIsProcessing(true);
-
-        const payload = {
-            seats,
-            totalPrice,
-            customer: formData,
+        const bookingRequest = {
             showtimeId: showtime.id,
+            seatIds: seats.map(seat => seat.seatId),
+            guestFirstName: formData.firstName,
+            guestLastName: formData.lastName,
+            guestEmail: formData.email,
+            guestPhone: formData.phone,
+            customerIp: null,
         };
+        console.log("BOOKING Request:", bookingRequest);
+        try {
+            const response = await mutateAsync(bookingRequest);
 
-        console.log("PAYMENT PAYLOAD:", payload);
+            console.log("BOOKING RESPONSE:", response);
 
-        setTimeout(() => {
-            alert("Przekierowanie do PayU...");
-            setIsProcessing(false);
-        }, 1500);
+            if (response.redirectUrl) {
+                window.location.href = response.redirectUrl;
+            }
+        } catch (err) {
+            console.error("Booking failed", err);
+            console.log("BACKEND ERROR:", err.response?.data);
+        }
     };
 
     const formatShowtimeDate = (start, end) => {

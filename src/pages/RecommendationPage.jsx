@@ -393,9 +393,9 @@ const RecommendationPage = () => {
 
             {showAIDialog && (
                 <div className="fixed inset-0 bg-black/95 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                    <div className="bg-gradient-to-br from-black via-black to-primary/5 border-2 border-primary rounded-3xl w-full max-w-7xl max-h-[95vh] flex flex-col shadow-2xl shadow-primary/40 overflow-hidden">
+                    <div className="bg-linear-to-br from-black via-black to-primary/5 border-2 border-primary rounded-3xl w-full max-w-7xl max-h-[95vh] flex flex-col shadow-2xl shadow-primary/40 overflow-hidden">
                
-                        <div className="relative bg-gradient-to-r from-primary/20 via-primary/10 to-transparent border-b border-primary/30 p-6 flex items-center justify-between flex-shrink-0">
+                        <div className="relative bg-linear-to-r from-primary/20 via-primary/10 to-transparent border-b border-primary/30 p-6 flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-4">
                                 <div>
                                     <h2 className="text-3xl font-bold bg-primary bg-clip-text text-transparent">
@@ -457,7 +457,7 @@ const RecommendationPage = () => {
                                                     {currentAIMovie.genres.map((genre, idx) => (
                                                         <span
                                                             key={idx}
-                                                            className="px-4 py-2 bg-gradient-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-full text-sm font-medium hover:from-primary/30 hover:to-primary/20 transition-all"
+                                                            className="px-4 py-2 bg-linear-to-r from-primary/20 to-primary/10 border border-primary/30 rounded-full text-sm font-medium hover:from-primary/30 hover:to-primary/20 transition-all"
                                                         >
                                                             {genre}
                                                         </span>
@@ -476,19 +476,19 @@ const RecommendationPage = () => {
                                                     )}
                                                 </div>
 
-                                                <div className="bg-gradient-to-br from-primary/5 to-transparent border border-primary/20 rounded-xl p-4 mb-6">
+                                                <div className="bg-linear-to-br from-primary/5 to-transparent border border-primary/20 rounded-xl p-4 mb-6">
                                                     <p className="text-base leading-relaxed">
                                                         {currentAIMovie.description}
                                                     </p>
                                                 </div>
                                             </div>
 
-                                            <div className="flex-shrink-0 pt-6 border-t border-primary/20">
+                                            <div className="shrink-0 pt-6 border-t border-primary/20">
                                                 <div className="flex items-center gap-2 mb-4">
                                                     <h4 className="text-xl font-semibold text-primary">Analiza AI</h4>
                                                 </div>
                                                 <div className="grid grid-cols-2 gap-4">
-                                                    <div className="relative overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/30 rounded-xl p-5 hover:from-primary/30 hover:via-primary/15 transition-all">
+                                                    <div className="relative overflow-hidden bg-linear-to-br from-primary/20 via-primary/10 to-transparent border border-primary/30 rounded-xl p-5 hover:from-primary/30 hover:via-primary/15 transition-all">
                                                         <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full blur-2xl"></div>
                                                         <p className="text-sm mb-2 relative z-10">Dopasowanie</p>
                                                         <div className="flex items-end gap-2 relative z-10">
@@ -496,7 +496,7 @@ const RecommendationPage = () => {
                                                             <p className="text-2xl text-primary/70 mb-1">%</p>
                                                         </div>
                                                     </div>
-                                                    <div className="relative overflow-hidden bg-gradient-to-br from-primary/20 via-primary/10 to-transparent border border-primary/30 rounded-xl p-5 hover:from-primary/30 hover:via-primary/15 transition-all">
+                                                    <div className="relative overflow-hidden bg-linear-to-br from-primary/20 via-primary/10 to-transparent border border-primary/30 rounded-xl p-5 hover:from-primary/30 hover:via-primary/15 transition-all">
                                                         <div className="absolute top-0 right-0 w-20 h-20 bg-primary/10 rounded-full blur-2xl"></div>
                                                         <p className="text-sm mb-2 relative z-10">Przewidywana ocena</p>
                                                         <div className="flex items-center gap-2 relative z-10">
@@ -513,7 +513,7 @@ const RecommendationPage = () => {
                                     <div className="flex items-center justify-between pt-6 border-t border-primary/20 mt-6">
                                         <button
                                             onClick={handleAIPrevious}
-                                            className="flex cursor-pointer items-center gap-3 px-6 py-3 bg-gradient-to-r from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 rounded-xl transition-all text-base font-medium border border-primary/30"
+                                            className="flex cursor-pointer items-center gap-3 px-6 py-3 bg-linear-to-r from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 rounded-xl transition-all text-base font-medium border border-primary/30"
                                         >
                                             <ChevronLeft size={20} />
                                             Poprzedni
@@ -536,7 +536,7 @@ const RecommendationPage = () => {
 
                                         <button
                                             onClick={handleAINext}
-                                            className="flex cursor-pointer items-center gap-3 px-6 py-3 bg-gradient-to-r from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 rounded-xl transition-all text-base font-medium border border-primary/30"
+                                            className="flex cursor-pointer items-center gap-3 px-6 py-3 bg-linear-to-r from-primary/20 to-primary/10 hover:from-primary/30 hover:to-primary/20 rounded-xl transition-all text-base font-medium border border-primary/30"
                                         >
                                             Następny
                                             <ChevronRight size={20} />

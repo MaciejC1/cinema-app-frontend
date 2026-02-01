@@ -98,7 +98,7 @@ const TicketPage = () => {
                 let price = showData.basePrice;
                 if (seat.seatType === "premium") price = showData.premiumPrice;
                 if (seat.seatType === "vip") price = showData.vipPrice;
-                const seatId = `${seat.rowNumber}-${seat.seatNumber}`
+                const seatId = seat.id
 
                 return [...prev, { ...seat, price, seatId }];
             }
@@ -294,6 +294,7 @@ const TicketPage = () => {
                                                     poster: movie.poster,
                                                 },
                                                 showtime: {
+                                                    id: showtimeId,
                                                     startTime: showData.startTime,
                                                     endTime: showData.endTime,
                                                     hallName: showData.hallName,

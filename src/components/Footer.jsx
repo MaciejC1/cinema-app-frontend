@@ -6,7 +6,7 @@ import { Facebook, Instagram, Twitter, Youtube } from "lucide-react";
 const Footer = () => {
   return (
     <footer className="w-full bg-[#0D0D0D] text-white mt-20 border-t border-primary/20">
-      <div className="max-w-[1400px] mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-16 items-start md:divide-y-0 md:divide-x divide-[#DF2144]/10">
+      <div className="max-w-[1400px] mx-auto px-6 py-10 grid grid-cols-1 md:grid-cols-3 gap-16 items-start md:divide-y-0 md:divide-x divide-primary/10">
 
         <div className="pb-6 md:pb-0 md:pr-10">
           <Link to="/" className="flex">

@@ -22,7 +22,6 @@ apiWithToken.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
-    // jeśli access token wygasł
     if (error.response?.status === 401 && !originalRequest._retry) {
       if (isRefreshing) {
         return new Promise((resolve) => {
@@ -34,7 +33,6 @@ apiWithToken.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // odśwież token
         await apiWithoutToken.post(
           "/public/auth/refresh",
           {},
